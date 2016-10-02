@@ -1,0 +1,87 @@
+<dom-module id="kudos-stats">
+<link rel="import" href="../css/kudo-style.html">
+<template id="tmpkudoAbout">
+    <style include="about-estilo"></style>
+    <style include="kudos"></style>
+
+        <h1>Equipo desarrollador</h1>
+        <div>
+            <template id="team-member" is="dom-repeat" items="{{members}}" as="member">
+                <div class="member">
+                  <img class="avatar" src$="../images/devs/{{member.pic}}">    
+                  <p>{{member.name}}</p>
+                </div>
+            </template>
+        </div>
+
+</template>
+<script>
+ Polymer({ 
+    is: 'kudos-stats',
+    properties: {
+      members:{
+          type: Array,
+          notify: true,
+          value:[]
+      },
+      kudo: {
+          type:Object,
+          notify: true,
+          value: function() { return {}; }
+      },
+      member: {
+          type:Object,
+          notify: true,
+          value: function() { return {}; }
+      },
+    },
+    ready: function(){},
+    attached: function(){
+        this.getKudos();
+        this.getMember();
+    },
+    getKudos: function(){
+        var about = this;
+        var pathKudos = this.pathEventos+"/kudos";
+        about.kudos = [];
+        firebase.database().ref(pathKudos).once('value').then(function(listado) {
+          listado.forEach(function(child) {
+            var kudo = child.val();
+            about.push('kudos', kudo);            
+          });
+          if(about.kudos){
+             about.set('kudo', about.kudos[0]);
+          }
+        });
+    },
+    getMember: function(){
+        var about = this;
+        about.members = [];
+        var pathDevs = this.pathEventos+"/devs";
+        firebase.database().ref(pathDevs).once('value').then(function(listado) {
+          listado.forEach(function(child) {
+            var member = child.val();
+            about.push('members', member);            
+          });
+        });
+    },
+    describirKudo: function(event) {        
+        var kudoSeleccionado = event.model['__data__'];
+        var idKudo = kudoSeleccionado.kudo.id;
+        var idBtnKudo = this.$$('#'+idKudo);
+        if(idBtnKudo != this.botonSeleccionado){
+          if(this.botonSeleccionado != null) {
+            this.botonSeleccionado.active = false;
+          }
+        } else {
+          this.botonSeleccionado = {};
+        }
+        this.botonSeleccionado = idBtnKudo;
+        this.descripcionVisible = idBtnKudo.active;
+        if(idBtnKudo.active){
+          this.descripcion = kudoSeleccionado.kudo.description;
+        }
+    }
+  });
+</script>
+</dom-module>

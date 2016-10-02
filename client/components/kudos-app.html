@@ -1,0 +1,170 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/app-route/app-location.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
+<link rel="import" href="../bower_components/iron-label/iron-label.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-icons/editor-icons.html">
+<link rel="import" href="../bower_components/iron-icons/places-icons.html">
+<link rel="import" href="../bower_components/iron-icons/social-icons.html">
+<link rel="import" href="../bower_components/iron-icons/communication-icons.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../bower_components/paper-badge/paper-badge.html">
+<link rel="import" href="../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../bower_components/paper-styles/color.html">
+<link rel="import" href="../bower_components/paper-styles/typography.html">
+<link rel="import" href="../bower_components/paper-header-panel/paper-header-panel.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-tooltip/paper-tooltip.html">
+<link rel="import" href="../bower_components/paper-styles/demo-pages.html">
+<link rel="import" href="../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../bower_components/neon-animation/animations/scale-up-animation.html">
+<link rel="import" href="../bower_components/neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="kudos-cards.html">
+<link rel="import" href="kudos-stats.html">
+<link rel="import" href="kudos-about.html">
+<dom-module id="kudos-app">
+    <template>
+        <style is="custom-style">
+            :host {
+            --app-primary-color: #094FA4; /*#4285f4;*/
+            --app-secondary-color: black;
+                display: block;
+            }
+            app-header {
+                color: #fff;
+                background-color: var(--app-primary-color);
+            }
+            app-header paper-icon-button {
+                --paper-icon-button-ink-color: white;
+            }
+            .logo{
+                color: #9BE1FB;
+            }
+        </style>
+        <div hidden$="{{logged}}" width="100%" style="text-align:center;">
+            Bienvenid@ a Kudos, para poder dejar tu feedback debes identificarte:<br>
+            <paper-button class="green" raised on-tap="signInWithGoogle">
+                <iron-icon icon="perm-identity"></iron-icon>
+                Ingresar con mi cuenta Google
+            </paper-button>
+        </div>
+        <div hidden$="{{!logged}}" width="100%" style="text-align:center;">
+            <app-header-layout>
+                <app-header fixed>
+                    <app-toolbar>
+                        <div><span class="logo">KUDOS</span> | [[eventName]]</div>
+                        <iron-icon icon="icons:events"></iron-icon>
+                        <div main-title></div>
+                        <paper-icon-button icon="view-list"   title="Tarjetas"     on-tap="showCards"></paper-icon-button>
+                        <paper-icon-button icon="assessment"  title="Estadísticas" on-tap="showStats"></paper-icon-button>
+                        <paper-icon-button icon="help"        title="Acerca de"    on-tap="showAbout"></paper-icon-button>
+                        <paper-icon-button icon="exit-to-app" title="Salir"        on-tap="signOut"  ></paper-icon-button>
+                    </app-toolbar>
+                </app-header>
+                <kudos-cards id="cards" style="display:block" activeEvent="[[activeEvent]]" user={{user}}></kudos-cards>
+                <kudos-stats id="stats" style="display:none"></kudos-stats>
+                <kudos-about id="about" style="display:none"></kudos-about>
+            </app-header-layout>
+        </div>
+    </template>
+    <script src="https://www.gstatic.com/firebasejs/3.0.4/firebase.js"></script>
+    <script>
+        Polymer({
+            is: 'kudos-app',
+            properties: {
+                logged      : { type : Boolean, notify : true }, // Is Authenticated by Google?
+                user        : { type : Object, notify : true },   // User Logged In
+                activeEvent : { type : String, notify : true },
+                eventName   : { type : String, notify : true, value : "MacroComité" }   // Event Title
+            },
+            ready:function() {
+                //this.eventName = 'Macrocomité 4T';
+                firebase.initializeApp({
+                    apiKey: "AIzaSyBiBdm3MheV4sN7lfk0WLoVDtXXxHxbbvk",
+                    authDomain: "devnovators.firebaseapp.com",
+                    databaseURL: "https://devnovators.firebaseio.com",
+                    storageBucket: "devnovators.appspot.com",
+                });
+                var parent = this;
+                firebase.auth().onAuthStateChanged(function(account) {
+                    if (account) {
+                        parent.set('user', account);
+                        parent.set('logged', true);
+                    }
+                });
+                this.activeEvent = this.getActiveEvent();
+                //this.eventName = this.getEventName(this.activeEvent);
+            },
+            getActiveEvent:function() {
+                var result;
+                firebase.database().ref("/eventoActivo").once("value").then(function(snapshot) {
+                    result = snapshot.val();
+                });
+                return result;
+            },
+            attached:function() {
+                //this.eventName = this.getEventName(this.activeEvent);
+            },
+            getEventName:function(event) {
+                var result;
+                var ruta = "/eventos/" + event;
+                console.log('ruta : '+ruta);
+                firebase.database().ref(ruta).once("value").then(function(snapshot) {
+                    result = snapshot.val();
+                    console.log('getEventName.result : '+result);
+                });
+                return result;
+            },
+            signInWithGoogle:function() {
+                if (!firebase.auth().currentUser) {
+                    var provider = new firebase.auth.GoogleAuthProvider();
+                    var parent = this;
+                    firebase.auth().signInWithPopup(provider).then(function(result) {
+                        parent.set('logged', true);
+                    }).catch(function(error) { //error.code //error.message //error.credential
+                        if (error.code === 'auth/account-exists-with-different-credential') {
+                            alert('You have already signed up with a different auth provider for that email.');
+                        } else {
+                            console.log('error : ' + error);
+                        }
+                    });
+                } else {
+                    //firebase.auth().signOut();
+                }
+            },
+            showCards:function() {
+                this.$.cards.style.display = "block";
+                this.$.stats.style.display = "none";
+                this.$.about.style.display = "none";
+            },
+            showStats:function() {
+                this.$.cards.style.display = "none";
+                this.$.stats.style.display = "block";
+                this.$.about.style.display = "none";
+            },
+            showAbout:function() {
+                this.$.cards.style.display = "none";
+                this.$.stats.style.display = "none";
+                this.$.about.style.display = "block";
+            },
+            signOut:function() {
+                firebase.auth().signOut();
+                this.set('logged', false);
+            }
+        });
+    </script>
+</dom-module>

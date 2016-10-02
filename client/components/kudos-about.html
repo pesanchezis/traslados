@@ -1,0 +1,150 @@
+<dom-module id="kudos-about">
+<link rel="import" href="../css/kudo-style.html">
+<template id="tmpkudoAbout">
+    <style include="about-estilo"></style>
+    <style include="kudos"></style>
+    <div class="card">
+        <h1>{{titulo}}</h1>
+        <p>{{titulo_des}}</p>
+        <h1>{{sub_titulo}}</h1>
+        <p>{{contenido_sub_titulo}}</p>
+        <paper-button id="kudoejemplo" class="kudo" toggles raised>
+         <iron-icon icon="{{kudo.icon}}"></iron-icon> {{kudo.title}}
+        </paper-button><span>{{sub_contenido}}</span>
+        <h1>{{titulo_secundario}}</h1>
+        <template id="kudos-disponibles" is="dom-repeat" items="{{kudos}}" as="kudo">
+            <paper-button id="{{kudo.id}}" class="kudo" on-click="describirKudo" toggles raised>
+              <iron-icon  icon="{{kudo.icon}}"></iron-icon> {{kudo.title}}
+            </paper-button>
+        </template>
+        <template is="dom-if" if="{{descripcionVisible}}">
+         <div style="padding-left: 7px;">
+           <span style="color: #0079C1; font-weight: bold;">Se agredece al equipo por:<br>{{descripcion}}</span>
+         </div>
+        </template>
+        <br>
+        <h1>Equipo desarrollador</h1>
+        <div>
+            <template id="team-member" is="dom-repeat" items="{{members}}" as="member">
+                <div class="member">
+                  <div> <img src$="../images/devs/{{member.pic}}" class="image"></div>
+                  <div><span>{{member.name}}</span></div>
+                </div>
+            </template>
+        </div>
+    </div>
+</template>
+<script>
+ Polymer({ 
+    is: 'kudos-about',
+    properties: {
+      titulo:{
+         type: String,
+         notify: true,
+         value: "Acerca de kudos"
+      },
+      titulo_des: {
+          type: String,
+          notify: true,
+          value: "Kudos, una forma de participar, reconocer y dar feedback a las inicitativas "+ 
+                  "y presentaciones del macrocomité 4T."
+      },
+      sub_titulo:{
+          type:String,
+          notify: true,
+          value: "¿Cómo valorar una iniciativa o presentación?"
+      },
+      contenido_sub_titulo:{
+          type: String,
+          notify: true,
+          value: "Para poder valorar una iniciativa es muy sencillo,"+
+                 "en cada presentación de los proyectos encontrarás"+
+                 "unos íconos con las categorías de valoraciones a otorgar."
+      },
+      sub_contenido: {
+         type: String,
+         notify: true,
+         value:"(Ejemplo de como agredecer)."
+      },
+      titulo_secundario:{
+          type: String,
+          notify: true,
+          value: "¿Qué valoraciones se pueden otorgar?"
+      },
+      pathEventos:{
+          type:String,
+          notify: true,
+          value: "/eventos/macroComite4T"
+      },
+      kudos: {
+          type: Array,
+          notify: true,
+          value:[]
+      },
+      members:{
+          type: Array,
+          notify: true,
+          value:[]
+      },
+      kudo: {
+          type:Object,
+          notify: true,
+          value: function() { return {}; }
+      },
+      member: {
+          type:Object,
+          notify: true,
+          value: function() { return {}; }
+      },
+    },
+    ready: function(){},
+    attached: function(){
+        this.getKudos();
+        this.getMember();
+    },
+    getKudos: function(){
+        var about = this;
+        var pathKudos = this.pathEventos+"/kudos";
+        about.kudos = [];
+        firebase.database().ref(pathKudos).once('value').then(function(listado) {
+          listado.forEach(function(child) {
+            var kudo = child.val();
+            kudo.id=child.key;
+            about.push('kudos', kudo);            
+          });
+          if(about.kudos){
+             about.set('kudo', about.kudos[0]);
+          }
+        });
+    },
+    getMember: function(){
+        var about = this;
+        about.members = [];
+        var pathDevs = this.pathEventos+"/devs";
+        firebase.database().ref(pathDevs).once('value').then(function(listado) {
+          listado.forEach(function(child) {
+            var member = child.val();
+            about.push('members', member);            
+          });
+        });
+    },
+    describirKudo: function(event) {        
+        var kudoSeleccionado = event.model['__data__'];
+        var idKudo = kudoSeleccionado.kudo.id;
+        var idBtnKudo = this.$$('#'+idKudo);
+        if(idBtnKudo != this.botonSeleccionado){
+          if(this.botonSeleccionado != null) {
+            this.botonSeleccionado.active = false;
+          }
+        } else {
+          this.botonSeleccionado = {};
+        }
+        this.botonSeleccionado = idBtnKudo;
+        this.descripcionVisible = idBtnKudo.active;
+        if(idBtnKudo.active){
+          this.descripcion = kudoSeleccionado.kudo.description;
+        }
+    }
+  });
+</script>
+</dom-module>

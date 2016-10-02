@@ -1,0 +1,15 @@
+{
+  "entrypoint": "index.html",
+  "shell": "components/kudos-app.html",
+  "fragments": [
+  ],
+  "sourceGlobs": [
+   "components/**/*",
+   "images/**/*",
+   "bower.json"
+  ],
+  "includeDependencies": [
+    "manifest.json",
+    "bower_components/webcomponentsjs/webcomponents-lite.min.js"
+  ]
+}
