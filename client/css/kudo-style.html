@@ -14,9 +14,18 @@
       transition: height 0.2s;
       background-color: blue !important;
     }
+    
+    #feedback{
+        z-index: 99999 !important;    
+    }
+    
     paper-card {
       font-size:0.9em;
       margin:5px;
+      --paper-card-actions : {
+        padding:5px;
+        text-align:left;
+      };
     }
     paper-card.rate { 
       @apply(--layout-horizontal); 
@@ -93,6 +102,8 @@
       font-size: 1.1em !important;
       color: #fff;
     }
+    
+    
     paper-button.kudo {
       background-color: #999999; /*#FFF5E0;*/
       color: white;
@@ -103,8 +114,11 @@
       min-width: 40px!important;*/
       font-size: x-small;
       text-transform: none! important;
-      margin: 5px; 
-      padding: 2px !important;
+      margin: 2px; 
+      padding-left: 3px;
+      padding-top: 2px;
+      padding-bottom:2px;
+      float:left;
     } 
     paper-button.kudo[active] {
       background-color: #82C82D;

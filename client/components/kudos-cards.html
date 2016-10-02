@@ -4,7 +4,6 @@
         <style include="cards"></style>
         <img id="imgProfile" class="avatar" src="{{user.photoURL}}">
         ¡Bienvenido {{user.displayName}}!
-        
         <template id="resultList" is="dom-repeat" items="{{blocks}}" as="block">
           <template id="resultList" is="dom-repeat" items="{{_getCards(block)}}" as="card">
           <paper-card class="rate">
@@ -26,8 +25,8 @@
               </div>
                 <div class="card-actions">
                   <template id="tmtKudo" is="dom-repeat" items="{{kudos}}" as="kudo">
-                    <!--{{getKudosUser()}}-->
-                    <paper-button class="kudo" toggles  id="{{card.id}}_{{kudo.id}}" on-click="valorar">
+                    {{getKudosUser(card.id,kudo.id)}}
+                    <paper-button class="kudo" toggles  id="id_{{card.id}}_{{kudo.id}}" on-click="valorar">
                       <iron-icon icon="{{kudo.icon}}"></iron-icon> {{kudo.title}}
                     </paper-button>
                     <paper-tooltip for="{{kudo.id}}" position="top" style="max-width:100px;">{{kudo.title}}<br> {{kudo.description}}</paper-tooltip>
@@ -36,14 +35,8 @@
           </paper-card>
           </template>
         </template>
-        <paper-dialog id="feedback" >
-          <h2 id="titleFeedback">Feedback para:</h2>
-          <paper-textarea id="txtFeedback" label="Ingresa tu feedback..."></paper-textarea>
-          <div class="buttons">
-            <paper-button id="btnFeedback" on-click="sendFeedback" autofocus>Enviar</paper-button>
-            <paper-button dialog-dismiss>Cancelar</paper-button>
-          </div>
-        </paper-dialog>
+        
+        
         <paper-toast id="toastAlert" text="Gracias por tu feedback"></paper-toast>
     </template>
     <script>
@@ -52,7 +45,6 @@
         properties:{
           activeEvent:{
             type: String,
-            value:"macroComite4T",
             notify:true
           },
           db: Object,
@@ -75,16 +67,20 @@
             type: Array,
             notify:true
           },
+          txtFeedback:{
+            type:String,
+            notify:true
+          }
         },
         attached:function(){
-            console.info(this.user);
+            console.info(this.userEmail);
             //this.userEmail=this.user.email.toString().replace(/[@.]/g,'_'); 
-            this.userEmail="elvis_nizama_bbva_com";
+            //this.userEmail="elvis_nizama_bbva_com";
             this.getKudos();
             this.getBlocks();
         },
         ready:function(){
-            console.info(this.user);
+            console.info(this.userEmail);
         },
         getKudos:function(){
           var self = this;
@@ -94,27 +90,6 @@
               var kudo = child.val();
               kudo.id=child.key;
               self.push('kudos', kudo);
-            });
-          });
-        },
-        getCards:function(){
-          console.info(this.activeEvent);
-          var ref = firebase.database().ref("eventos/" + this.activeEvent + "/blocks");
-          var self = this;
-          self.cards = [];
-          ref.once("value").then(function(snapshot) {
-            snapshot.forEach(function(child) {
-              var block = child.val();
-              var _card={}; 
-              for (var card in block.cards) {
-                _card.titleBlock=block.title;
-                _card.color=block.color;
-                _card.description=block.cards[card].description;
-                _card.title=block.cards[card].title;
-                _card.id=card;
-                console.info(_card);
-                self.push('cards', _card);
-              }
             });
           });
         },
@@ -133,7 +108,6 @@
         _getCards:function(block){
           this.cards=[];
           self=this;
-          
           for (var card in block.cards) {
             var _card={}; 
             _card.titleBlock=block.title;
@@ -141,25 +115,41 @@
             _card.description=block.cards[card].description;
             _card.title=block.cards[card].title;
             _card.id=card;
-            console.info(_card);
             self.push('cards', _card);
           }
           return this.cards;
         },
         openModal:function(e){
           var btnCard = Polymer.dom(e).localTarget;
-          var card=btnCard.data;
+          var card = btnCard.data;
           var self=this;
-          this.$.btnFeedback.data=card.id;
-          this.$.titleFeedback.innerHTML="Feedback para:<br>" + card.title;
-          this.$.feedback.open();
+          
+          Polymer.dom(this.root).querySelector('#txtFeedback').value="";
+          Polymer.dom(this.root).querySelector('#btnFeedback').data=card.id;
+          Polymer.dom(this.root).querySelector('#titleFeedback').innerHTML="Feedback para:<br>" + card.title;
+          
+          while (!btnCard.hasAttribute('data-dialog') && btnCard !== document.body) {
+            btnCard = btnCard.parentElement;
+          }
+          
+          if (!btnCard.hasAttribute('data-dialog')) {
+            return;
+          }
+          var id = btnCard.getAttribute('data-dialog');
+          var dialog = document.getElementById(id);
+          if (dialog) {
+            dialog.open();
+          }
+          
+          
           var ref = firebase.database().ref("eventos/" + this.activeEvent + "/users/" + this.userEmail+ "/"+ card.id + "/comments");
           ref.once('value').then(function(snapshot) {
             var msg="";
             if(snapshot.val()!=null){
               msg=snapshot.val().message;
             }
-            self.$.txtFeedback.value=msg; 
+            Polymer.dom(this.root).querySelector('#txtFeedback').value=msg;
+            
           });
         },
         sendFeedback:function(){
@@ -182,32 +172,42 @@
           this.$.feedback.close();
           this.$.toastAlert.open();
         },
-        _valorar:function(e) {
+        valorar:function(e) {
           var kudoSeleccionado = e.model['__data__'];
           var idKudo = kudoSeleccionado.kudo.id;
           var idCard = kudoSeleccionado.card.id;
-          var idBtnKudo=this.$$('#' +idCard +'_' +idKudo);
+          var idBtnKudo=this.$$('#id_' +idCard +'_' +idKudo);
           var voto = 1;
           if (!idBtnKudo.active){
             voto = -1;  
           }
-        //   var postRef = firebase.database().ref('/eventos').child(this.activeEvent).child('kudos').child(idKudo);
+        //   var postRef = firebase.database().ref('eventos').child(this.activeEvent).child('users').child(this.userEmail).child('numkudos');
         //   postRef.transaction(function(votoActual) {
         //     if (votoActual) {
+        //       console.info(votoActual);
         //       return votoActual+voto;
         //     } else {
         //       return 1;
         //     }
         //   });
-          var refControl = firebase.database().ref('/eventos/users').child(this.userEmail).child('kudos').child(this.idCard);
+          var refControl = firebase.database().ref('eventos/' + this.activeEvent +'/users').child(this.userEmail);
           if(voto > 0) {
             var updates = {};
-            updates["/" +idKudo] = true;
+            updates["/" + idCard + "/kudos/" + idKudo] = true;
             refControl.update(updates); 
           } else {
-            firebase.database().ref('/users').child(this._user).child(this.project.id).child('kudos').child(idKudo).remove();
+            firebase.database().ref('eventos/' + this.activeEvent +'/users').child(this.userEmail).child(idCard).child('kudos').child(idKudo).remove();
           }
         },
+        getKudosUser:function(idCard,idKudo){
+          self=this;
+          var ref = firebase.database().ref("eventos/" + this.activeEvent + "/users/" + this.userEmail + "/" + idCard + "/kudos/" + idKudo);
+          ref.once('value').then(function(snapshot) {
+            if(snapshot.val()!=null){
+                self.$$('#id_' +idCard +'_' +idKudo).active=snapshot.val();
+            }
+          });
+        }
       });
     </script>
 </dom-module>

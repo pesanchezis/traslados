@@ -75,11 +75,19 @@
                         <paper-icon-button icon="exit-to-app" title="Salir"        on-tap="signOut"  ></paper-icon-button>
                     </app-toolbar>
                 </app-header>
-                <kudos-cards id="cards" style="display:block" activeEvent="[[activeEvent]]" user={{user}}></kudos-cards>
+                <kudos-cards id="cards" style="display:block" activeEvent="[[activeEvent]]" user={{user}} userEmail="{{userEmail}}" userName="{{userName}}" userPicture="{{userPicture}}"></kudos-cards>
                 <kudos-stats id="stats" style="display:none"></kudos-stats>
                 <kudos-about id="about" style="display:none"></kudos-about>
             </app-header-layout>
         </div>
+        <paper-dialog id="feedback" modal>
+          <h2 id="titleFeedback">Feedback para:</h2>
+          <paper-textarea id="txtFeedback" label="Ingresa tu feedback..."></paper-textarea>
+          <div class="buttons">
+            <paper-button id="btnFeedback" on-click="sendFeedback" autofocus>Enviar</paper-button>
+            <paper-button dialog-dismiss>Cancelar</paper-button>
+          </div>
+        </paper-dialog>
     </template>
     <script src="https://www.gstatic.com/firebasejs/3.0.4/firebase.js"></script>
     <script>
@@ -88,8 +96,14 @@
             properties: {
                 logged      : { type : Boolean, notify : true }, // Is Authenticated by Google?
                 user        : { type : Object, notify : true },   // User Logged In
+                userEmail   : { type : String, notify : true, observer : '_userEmailChanged' },
+                userName    : { type : String, notify : true },
+                userPicture : { type : String, notify : true },
                 activeEvent : { type : String, notify : true },
                 eventName   : { type : String, notify : true, value : "MacroComité" }   // Event Title
+            },
+            _userEmailChanged:function(newVal, oldVal) {
+                //console.log('_userEmailChanged newVal:'+newVal+' oldVal:'+oldVal);
             },
             ready:function() {
                 //this.eventName = 'Macrocomité 4T';
@@ -103,31 +117,23 @@
                 firebase.auth().onAuthStateChanged(function(account) {
                     if (account) {
                         parent.set('user', account);
+                        parent.set('userEmail', account.email);
+                        parent.$.cards.userEmail = account.email.toString().replace(/[@.]/g,'_');
+                        parent.$.cards.userPicture = account.photoURL || '../images/avatar_login.png';
+                        parent.set('userName', account.displayName);
+                        parent.set('userPicture', account.photoURL);
                         parent.set('logged', true);
                     }
                 });
-                this.activeEvent = this.getActiveEvent();
-                //this.eventName = this.getEventName(this.activeEvent);
-            },
-            getActiveEvent:function() {
-                var result;
                 firebase.database().ref("/eventoActivo").once("value").then(function(snapshot) {
-                    result = snapshot.val();
+                    var activo = snapshot.val(); //console.log('activo:'+activo);
+                    parent.set('activeEvent', activo); //console.log('parent.activeEvent:', parent.activeEvent);
+                    parent.$.cards.activeEvent = activo;
+                    firebase.database().ref("/eventos/"+activo).once("value").then(function(snapshot) {
+                        var nombre = snapshot.val().name; //console.log('nombre:'+nombre);
+                        parent.set('eventName', nombre); //console.log('parent.eventName:', parent.eventName);
+                    });
                 });
-                return result;
-            },
-            attached:function() {
-                //this.eventName = this.getEventName(this.activeEvent);
-            },
-            getEventName:function(event) {
-                var result;
-                var ruta = "/eventos/" + event;
-                console.log('ruta : '+ruta);
-                firebase.database().ref(ruta).once("value").then(function(snapshot) {
-                    result = snapshot.val();
-                    console.log('getEventName.result : '+result);
-                });
-                return result;
             },
             signInWithGoogle:function() {
                 if (!firebase.auth().currentUser) {

@@ -19,7 +19,7 @@
         </template>
         <template is="dom-if" if="{{descripcionVisible}}">
          <div style="padding-left: 7px;">
-           <span style="color: #0079C1; font-weight: bold;">Se agredece al equipo por:<br>{{descripcion}}</span>
+           <span style="color: #0079C1; font-weight: bold;">Se agradece al equipo por:<br>{{descripcion}}</span>
          </div>
         </template>
         <br>
@@ -28,7 +28,7 @@
             <template id="team-member" is="dom-repeat" items="{{members}}" as="member">
                 <div class="member">
                   <div> <img src$="../images/devs/{{member.pic}}" class="image"></div>
-                  <div><span>{{member.name}}</span></div>
+                  <div><span style="color:#0072BB; font-size:1em; font-weight:500;">{{member.name}}</span></div>
                 </div>
             </template>
         </div>
@@ -47,7 +47,7 @@
           type: String,
           notify: true,
           value: "Kudos, una forma de participar, reconocer y dar feedback a las inicitativas "+ 
-                  "y presentaciones del macrocomité 4T."
+                  "y presentaciones del MacroComité 4T."
       },
       sub_titulo:{
           type:String,
@@ -57,14 +57,14 @@
       contenido_sub_titulo:{
           type: String,
           notify: true,
-          value: "Para poder valorar una iniciativa es muy sencillo,"+
-                 "en cada presentación de los proyectos encontrarás"+
-                 "unos íconos con las categorías de valoraciones a otorgar."
+          value: "Para poder valorar una iniciativa es muy sencillo: "+
+                 "En cada presentación podrás encontrar "+
+                 "unos íconos con las categorías de valoración a otorgar."
       },
       sub_contenido: {
          type: String,
          notify: true,
-         value:"(Ejemplo de como agredecer)."
+         value:"(Ejemplo de cómo agradecer)."
       },
       titulo_secundario:{
           type: String,
