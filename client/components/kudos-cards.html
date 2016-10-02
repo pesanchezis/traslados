@@ -16,7 +16,7 @@
                       {{card.description}}
                     </div>
                     <div class="div_feedback">
-                      <paper-button data-dialog="feedback" class="rate-icon feeback" id="{{card.id}}" data='{{card}}'
+                      <paper-button class="rate-icon feeback" id="{{card.id}}" data='{{card}}'
                         on-click="openModal">
                         Danos feedback <iron-icon icon="announcement" data='{{card}}'></iron-icon>
                       </paper-button>
@@ -35,8 +35,14 @@
           </paper-card>
           </template>
         </template>
-        
-        
+        <paper-dialog id="feedback" >
+          <h2 id="titleFeedback">Feedback para:</h2>
+          <paper-textarea id="txtFeedback" label="Ingresa tu feedback..."></paper-textarea>
+          <div class="buttons">
+            <paper-button id="btnFeedback" on-click="sendFeedback" autofocus>Enviar</paper-button>
+            <paper-button dialog-dismiss>Cancelar</paper-button>
+          </div>
+        </paper-dialog>
         <paper-toast id="toastAlert" text="Gracias por tu feedback"></paper-toast>
     </template>
     <script>
@@ -67,10 +73,6 @@
             type: Array,
             notify:true
           },
-          txtFeedback:{
-            type:String,
-            notify:true
-          }
         },
         attached:function(){
 
@@ -90,7 +92,7 @@
           });
         },
         getBlocks:function(){
-          console.info(this.activeEvent);
+          
           var ref = firebase.database().ref("eventos/" + this.activeEvent + "/blocks");
           var self = this;
           self.blocks = [];
@@ -119,33 +121,17 @@
           var btnCard = Polymer.dom(e).localTarget;
           var card = btnCard.data;
           var self=this;
-          
-          var txtfeed = document.getElementById('txtFeedback');
-          txtfeed.value="";
-          Polymer.dom(this.root).querySelector('btnFeedback').data=card.id;
-          Polymer.dom(this.root).querySelector('#titleFeedback').innerHTML="Feedback para:<br>" + card.title;
-          
-          while (!btnCard.hasAttribute('data-dialog') && btnCard !== document.body) {
-            btnCard = btnCard.parentElement;
-          }
-          if (!btnCard.hasAttribute('data-dialog')) {
-            return;
-          }
-          var id = btnCard.getAttribute('data-dialog');
-          var dialog = document.getElementById(id);
-          if (dialog) {
-            dialog.open();
-          }
-          
-          
+          this.$.txtFeedback.value="";
+          this.$.btnFeedback.data=card.id;
+          this.$.titleFeedback.innerHTML="Feedback para:<br>" + card.title;
+          this.$.feedback.open();
           var ref = firebase.database().ref("eventos/" + this.activeEvent + "/users/" + this.userEmail+ "/"+ card.id + "/comments");
           ref.once('value').then(function(snapshot) {
             var msg="";
             if(snapshot.val()!=null){
               msg=snapshot.val().message;
             }
-            Polymer.dom(this.root).querySelector('#txtFeedback').value=msg;
-            
+            self.$.txtFeedback.value=msg; 
           });
         },
         sendFeedback:function(){
