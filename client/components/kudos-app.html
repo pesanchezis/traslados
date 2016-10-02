@@ -115,20 +115,20 @@
                         parent.set('userName', account.displayName);
                         parent.set('userPicture', account.photoURL);
                         parent.set('logged', true);
+                        firebase.database().ref("eventoActivo").once("value").then(function(snapshot) {
+                            var activo = snapshot.val(); //console.log('activo:'+activo);
+                            parent.set('activeEvent', activo); //console.log('parent.activeEvent:', parent.activeEvent);
+                            parent.$.cards.activeEvent = activo;
+                            parent.$.cards.getKudos();
+                            parent.$.cards.getBlocks();
+                            parent.$.about.getKudos();
+                            parent.$.about.getMember();
+                            firebase.database().ref("/eventos/"+activo).once("value").then(function(snapshot) {
+                                var nombre = snapshot.val().name; //console.log('nombre:'+nombre);
+                                parent.set('eventName', nombre); //console.log('parent.eventName:', parent.eventName);
+                            });
+                        });
                     }
-                });
-                firebase.database().ref("eventoActivo").once("value").then(function(snapshot) {
-                    var activo = snapshot.val(); //console.log('activo:'+activo);
-                    parent.set('activeEvent', activo); //console.log('parent.activeEvent:', parent.activeEvent);
-                    parent.$.cards.activeEvent = activo;
-                    parent.$.cards.getKudos();
-                    parent.$.cards.getBlocks();
-                    parent.$.about.getKudos();
-                    parent.$.about.getMember();
-                    firebase.database().ref("/eventos/"+activo).once("value").then(function(snapshot) {
-                        var nombre = snapshot.val().name; //console.log('nombre:'+nombre);
-                        parent.set('eventName', nombre); //console.log('parent.eventName:', parent.eventName);
-                    });
                 });
             },
             signInWithGoogle:function() {
