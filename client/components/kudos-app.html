@@ -129,6 +129,8 @@
                     var activo = snapshot.val(); //console.log('activo:'+activo);
                     parent.set('activeEvent', activo); //console.log('parent.activeEvent:', parent.activeEvent);
                     parent.$.cards.activeEvent = activo;
+                    parent.$.cards.getKudos();
+                    parent.$.cards.getBlocks();
                     firebase.database().ref("/eventos/"+activo).once("value").then(function(snapshot) {
                         var nombre = snapshot.val().name; //console.log('nombre:'+nombre);
                         parent.set('eventName', nombre); //console.log('parent.eventName:', parent.eventName);

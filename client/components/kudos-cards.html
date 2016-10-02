@@ -16,7 +16,7 @@
                       {{card.description}}
                     </div>
                     <div class="div_feedback">
-                      <paper-button class="rate-icon feeback" id="{{card.id}}" data='{{card}}'
+                      <paper-button data-dialog="feedback" class="rate-icon feeback" id="{{card.id}}" data='{{card}}'
                         on-click="openModal">
                         Danos feedback <iron-icon icon="announcement" data='{{card}}'></iron-icon>
                       </paper-button>
@@ -73,14 +73,10 @@
           }
         },
         attached:function(){
-            console.info(this.userEmail);
-            //this.userEmail=this.user.email.toString().replace(/[@.]/g,'_'); 
-            //this.userEmail="elvis_nizama_bbva_com";
-            this.getKudos();
-            this.getBlocks();
+
         },
         ready:function(){
-            console.info(this.userEmail);
+
         },
         getKudos:function(){
           var self = this;
@@ -124,14 +120,14 @@
           var card = btnCard.data;
           var self=this;
           
-          Polymer.dom(this.root).querySelector('#txtFeedback').value="";
-          Polymer.dom(this.root).querySelector('#btnFeedback').data=card.id;
+          var txtfeed = document.getElementById('txtFeedback');
+          txtfeed.value="";
+          Polymer.dom(this.root).querySelector('btnFeedback').data=card.id;
           Polymer.dom(this.root).querySelector('#titleFeedback').innerHTML="Feedback para:<br>" + card.title;
           
           while (!btnCard.hasAttribute('data-dialog') && btnCard !== document.body) {
             btnCard = btnCard.parentElement;
           }
-          
           if (!btnCard.hasAttribute('data-dialog')) {
             return;
           }
