@@ -6,10 +6,10 @@
     <div class="card">
         <h1>Resultados macrocomité 4T</h1>
     </div>
-    <template is="dom-repeat" items="{{users}}" as="user">
-      {{user.name}} {{user.numKudos}}
-    </template>
-    
+    <div>
+      <h2>Ranking de participación</h2>
+      <span id="numUsers">(Número de usuarios: {{numUsers}})</span>
+    </div>  
     <iron-list id="userList" items="{{users}}" as="user" scroll-target="html">
       <template>
         <div>
@@ -18,8 +18,8 @@
             <div class="pad">
               <div class="primary">[[user.name]]</div>
               <address>
-                [[user.numKudos]] <br />
-                [[user.numFeedback]]
+                <div class="userSection">Feedbacks: [[user.numFeedback]]</div>
+                <div class="userSection">Kudos: [[user.numKudos]]</div>                
               </address>
             </div>
           </div>
@@ -63,6 +63,10 @@
       },
       users:{
         type: Array,
+        notify:true
+      },
+      numUsers:{
+        type: String,
         notify:true
       },
     },
@@ -139,14 +143,15 @@
     },
     getRanking:function(){
       var self=this;
-      firebase.database().ref('eventos/' + this.activeEvent +'/users').once('value').then(function(snapshot) {
+      firebase.database().ref('eventos/' + this.activeEvent +'/users').on('value',function(snapshot) {
         var users = snapshot.val();
+        var numUsers=0;
         self.users=[];
         for (var user in users) {
           var _user={};
+          numUsers++;
           _user.name=users[user].profile.name;
           _user.picture=users[user].profile.picture;
-          console.info(users[user]);
           var numKudos=0;
           var numFeedback=0;
           for (var card in users[user]) {
@@ -174,9 +179,11 @@
           _user.numKudos=numKudos;
           _user.numFeedback=numFeedback;
           self.push('users',_user);
-          self.users.sort(function(a,b) {return (a.numKudos > b.numKudos) ? -1 : ((b.numKudos > a.numKudos) ? 1 : 0);} );
+          self.users.sort(function(a,b) {return (a.numFeedback > b.numFeedback) ? -1 : ((b.numFeedback > a.numFeedback) ? 1 : 0);} );
         }
+        self.numUsers=numUsers;
       });
+      
     },
   });
 </script>

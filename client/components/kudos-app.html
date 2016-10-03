@@ -39,21 +39,25 @@
 <dom-module id="kudos-app">
     <template>
         <style is="custom-style">
-            :host {
-            --app-primary-color: #094FA4; /*#4285f4;*/
-            --app-secondary-color: black;
-                display: block;
-            }
-            app-header {
-                color: #fff;
-                background-color: var(--app-primary-color);
-            }
-            app-header paper-icon-button {
-                --paper-icon-button-ink-color: white;
-            }
-            .logo{
-                color: #9BE1FB;
-            }
+        :host {
+        --app-primary-color: #094FA4; /*#4285f4;*/
+        --app-secondary-color: black;
+            display: block;
+        }
+        app-header {
+            color: #fff;
+            background-color: var(--app-primary-color);
+        }
+        app-header paper-icon-button {
+            --paper-icon-button-ink-color: white;
+        }
+        .logo{
+            color: #9BE1FB;
+        }
+        paper-button.green {
+          background-color: #4285f4;
+          color: white;
+        }
         </style>
         <div hidden$="{{logged}}" width="100%" style="text-align:center; margin-top:20%;">
             Bienvenid@ a Kudos, para poder dejar tu feedback debes identificarte:<br>
