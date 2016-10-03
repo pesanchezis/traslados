@@ -189,3 +189,47 @@
     </style>
     </template>
 </dom-module>
+<dom-module id="stats">
+    <template>
+    <style>
+    iron-list {
+      padding-top: 64px;
+      padding-bottom: 16px;
+      --iron-list-items-container: {
+        max-width: 800px;
+        margin: auto;
+        margin-top: 60px;
+        margin-bottom: 10px;
+      };
+    }
+    .personItem {
+      @apply(--layout-horizontal);
+      margin: 16px 16px 0 16px;
+      padding: 20px;
+      border-radius: 8px;
+      background-color: white;
+      border: 1px solid #ddd;
+    }
+    .avatar {
+      height: 40px;
+      width: 40px;
+      border-radius: 20px;
+      box-sizing: border-box;
+      background-color: #DDD;
+    }
+    .pad {
+      padding: 0 16px;
+      @apply(--layout-flex);
+      @apply(--layout-vertical);
+    }
+    .primary {
+      font-size: 16px;
+      font-weight: bold;
+    }
+    address {
+      font-size: 14px;
+      margin: 10px 0;
+    }
+    </style>
+    </template>
+</dom-module>

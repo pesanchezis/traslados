@@ -1,7 +1,7 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
 <link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
-<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
+<!--<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">-->
 <link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
 <link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
 <link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
@@ -16,8 +16,8 @@
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../bower_components/iron-list/iron-list.html">
 <link rel="import" href="../bower_components/paper-badge/paper-badge.html">
-<link rel="import" href="../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../bower_components/paper-styles/color.html">
 <link rel="import" href="../bower_components/paper-styles/typography.html">
@@ -75,7 +75,7 @@
                         <paper-icon-button icon="exit-to-app" title="Salir"        on-tap="signOut"  ></paper-icon-button>
                     </app-toolbar>
                 </app-header>
-                <kudos-cards id="cards" style="display:none" activeEvent="[[activeEvent]]" user={{user}} userEmail="{{userEmail}}" userName="{{userName}}" userPicture="{{userPicture}}"></kudos-cards>
+                <kudos-cards id="cards" style="display:none"></kudos-cards>
                 <kudos-stats id="stats" style="display:none"></kudos-stats>
                 <kudos-about id="about" style="display:none"></kudos-about>
             </app-header-layout>
@@ -112,6 +112,7 @@
                         parent.set('userEmail', account.email);
                         parent.$.cards.userEmail = account.email.toString().replace(/[@.]/g,'_');
                         parent.$.cards.userPicture = account.photoURL || '../images/avatar_login.png';
+                        parent.$.cards.userName = account.displayName;
                         parent.set('userName', account.displayName);
                         parent.set('userPicture', account.photoURL);
                         parent.set('logged', true);
@@ -119,10 +120,12 @@
                             var activo = snapshot.val(); //console.log('activo:'+activo);
                             parent.set('activeEvent', activo); //console.log('parent.activeEvent:', parent.activeEvent);
                             parent.$.cards.activeEvent = activo;
+                            parent.$.stats.activeEvent = activo;
                             parent.$.cards.getKudos();
                             parent.$.cards.getBlocks();
                             parent.$.about.getKudos();
                             parent.$.about.getMember();
+                            parent.showCards();
                             firebase.database().ref("/eventos/"+activo).once("value").then(function(snapshot) {
                                 var nombre = snapshot.val().name; //console.log('nombre:'+nombre);
                                 parent.set('eventName', nombre); //console.log('parent.eventName:', parent.eventName);
@@ -158,6 +161,7 @@
                 this.$.cards.style.display = "none";
                 this.$.stats.style.display = "block";
                 this.$.about.style.display = "none";
+                this.$.stats.getRanking();
             },
             showAbout:function() {
                 this.$.cards.style.display = "none";

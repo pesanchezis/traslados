@@ -1,26 +1,183 @@
 <dom-module id="kudos-stats">
 <link rel="import" href="../css/kudo-style.html">
 <template id="tmpkudoStats">
-   <style include="about-estilo"></style>
-    <style include="kudos"></style>
+   <style include="cards"></style>
+   <style include="stats"></style>
     <div class="card">
         <h1>Resultados macrocomité 4T</h1>
-        <template>
-          <h1>Total de participantes: 3</h1>
-        </template>
-        <template>
-          <h1>Participantes con mayor participación</h1>
-        </template>
     </div>
+    <template is="dom-repeat" items="{{users}}" as="user">
+      {{user.name}} {{user.numKudos}}
+    </template>
+    
+    <iron-list id="userList" items="{{users}}" as="user" scroll-target="html">
+      <template>
+        <div>
+          <div class="personItem" tabindex$="[[tabIndex]]">
+            <iron-image class="avatar" sizing="contain" src="[[user.picture]]"></iron-image>
+            <div class="pad">
+              <div class="primary">[[user.name]]</div>
+              <address>
+                [[user.numKudos]] <br />
+                [[user.numFeedback]]
+              </address>
+            </div>
+          </div>
+        </div>
+      </template>
+    </iron-list>
+    
+    
+    <template is="dom-repeat" items="{{cards}}" as="card">
+      <paper-card class="rate">
+        <div class="rate-content">
+          <div>
+            <div class="rate-header titleProject" style="background-color:{{card.color}}">{{card.titleBlock}}</div>
+            <div class="rate-name">{{card.title}}</div>
+          </div>
+            <div class="card-actions">
+              <div>
+                <span>Feedback:</span>
+                <div id="id_{{card.id}}"></div>
+              </div>
+              <div>
+                <span>Kudos:</span>
+                <div id="kd_{{card.id}}"></div>
+              </div>
+              {{getKudosCard(card.id)}}
+            </div>
+      </paper-card>
+    </template>
 </template>
 <script>
  Polymer({ 
     is: 'kudos-stats',
     properties: {
-      
+      activeEvent:{
+        type: String,
+        notify:true
+      },
+      cards:{
+        type: Array,
+        notify:true
+      },
+      users:{
+        type: Array,
+        notify:true
+      },
     },
-    ready: function(){},
-    attached: function(){}
+    getCards:function(){
+      var ref = firebase.database().ref("eventos/" + this.activeEvent + "/blocks");
+      var self = this;
+      self.cards = [];
+      ref.once("value").then(function(snapshot) {
+        snapshot.forEach(function(child) {
+          var block = child.val();
+          for (var idCard in block.cards) {
+            var card={};
+            card=block.cards[idCard];
+            card.titleBlock=block.title;
+            card.color=block.color;
+            card.id=idCard;
+            self.push('cards', card);  
+          }  
+          
+        });
+      });
+    },
+    getKudosCard:function(idCard){
+      var self=this;
+      firebase.database().ref('eventos/' + this.activeEvent +'/users').once('value').then(function(snapshot) {
+        var users = snapshot.val();
+        var esinnovador = 0; var granesfuerzo = 0; var loentiendo = 0; var loqesperaba = 0; var megusta = 0; var mesirve = 0;
+        self.$$('#id_' +idCard).innerHTML='';
+        self.$$('#kd_' +idCard).innerHTML='';
+        var lf='';
+        for (var user in users) {
+          for (var card in users[user]) {
+            if (card == idCard) {
+              var feedback = '';
+              var vote = users[user][card];
+              for (var prop in vote) {
+                if (prop == 'comments') {
+                  for (var commentProps in users[user][card][prop]) {
+                    if (commentProps == 'message') {
+                      var message = users[user][card][prop][commentProps];
+                      if (message != ' ' && message != '.') {
+                        feedback = message;
+                      }
+                    }
+                  }
+                } else if (prop == 'kudos') {
+                  var kudos = users[user][card]['kudos'];
+                  if (kudos.esinnovador == true) { esinnovador++; }
+                  if (kudos.granesfuerzo == true) { granesfuerzo++; }
+                  if (kudos.loentiendo == true) { loentiendo++; }
+                  if (kudos.loqesperaba == true) { loqesperaba++; }
+                  if (kudos.megusta == true) { megusta++; }
+                  if (kudos.mesirve == true) { mesirve++; }
+                }
+              }
+              if (feedback != '') {
+                if(self.$$('#id_' +idCard).innerHTML.toString().length>0){
+                  lf='<br>';
+                }
+                self.$$('#id_' +idCard).innerHTML=self.$$('#id_' +idCard).innerHTML + lf + feedback;
+              }
+            }
+          }
+        }
+        var _kudos='';
+        _kudos = 'Innovador: '+ esinnovador + '<br>' ;
+        _kudos = _kudos + 'Gran esfuerzo: '+ granesfuerzo + '<br>' ;
+        _kudos = _kudos + 'Lo entiendo: '+ loentiendo + '<br>' ;
+        _kudos = _kudos + 'Lo esperaba: '+ loqesperaba + '<br>' ;
+        _kudos = _kudos + 'Me gusta: '+ megusta + '<br>' ;
+        _kudos = _kudos + 'Me sirve: '+ mesirve;
+        self.$$('#kd_' +idCard).innerHTML=_kudos;
+      });
+    },
+    getRanking:function(){
+      var self=this;
+      firebase.database().ref('eventos/' + this.activeEvent +'/users').once('value').then(function(snapshot) {
+        var users = snapshot.val();
+        self.users=[];
+        for (var user in users) {
+          var _user={};
+          _user.name=users[user].profile.name;
+          _user.picture=users[user].profile.picture;
+          console.info(users[user]);
+          var numKudos=0;
+          var numFeedback=0;
+          for (var card in users[user]) {
+            var vote = users[user][card];
+            for (var prop in vote) {
+              if (prop == 'comments') {
+                for (var commentProps in users[user][card][prop]) {
+                  if (commentProps == 'message') {
+                    var message = users[user][card][prop][commentProps];
+                    if (message.toString().length>1) {
+                      numFeedback++;
+                    }
+                  }
+                }
+              } else if (prop == 'kudos') {
+                var kudos = users[user][card]['kudos'];
+                for(var kudo in kudos){
+                  if(kudos[kudo]){
+                    numKudos++;
+                  }
+                }
+              }
+            }
+          }
+          _user.numKudos=numKudos;
+          _user.numFeedback=numFeedback;
+          self.push('users',_user);
+          self.users.sort(function(a,b) {return (a.numKudos > b.numKudos) ? -1 : ((b.numKudos > a.numKudos) ? 1 : 0);} );
+        }
+      });
+    },
   });
 </script>
 </dom-module>
