@@ -17,6 +17,7 @@
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../bower_components/iron-collapse/iron-collapse.html">
 <link rel="import" href="../bower_components/paper-badge/paper-badge.html">
 <link rel="import" href="../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../bower_components/paper-styles/color.html">
@@ -166,6 +167,7 @@
                 this.$.stats.style.display = "block";
                 this.$.about.style.display = "none";
                 this.$.stats.getRanking();
+                this.$.stats.getCards();
             },
             showAbout:function() {
                 this.$.cards.style.display = "none";
