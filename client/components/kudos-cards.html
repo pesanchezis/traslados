@@ -77,8 +77,8 @@
         },
         getKudos:function(){
           var self = this;
-          self.kudos = [];
           firebase.database().ref('eventos/' + this.activeEvent + '/kudos').once('value').then(function(snapshot) {
+            self.kudos = [];
             snapshot.forEach(function(child) {
               var kudo = child.val();
               kudo.id=child.key;
@@ -90,8 +90,8 @@
           
           var ref = firebase.database().ref("eventos/" + this.activeEvent + "/blocks");
           var self = this;
-          self.blocks = [];
           ref.once("value").then(function(snapshot) {
+            self.blocks = [];
             snapshot.forEach(function(child) {
               var block = child.val();
               self.push('blocks', block);
