@@ -163,21 +163,27 @@
                 }
             },
             showCards:function() {
-                this.$.cards.style.display = "block";
-                this.$.stats.style.display = "none";
-                this.$.about.style.display = "none";
+                if(this.logged){
+                    this.$.cards.style.display = "block";
+                    this.$.stats.style.display = "none";
+                    this.$.about.style.display = "none";
+                }
             },
             showStats:function() {
-                this.$.cards.style.display = "none";
-                this.$.stats.style.display = "block";
-                this.$.about.style.display = "none";
-                this.$.stats.getRanking();
-                this.$.stats.getCards();
+                if(this.logged){
+                    this.$.cards.style.display = "none";
+                    this.$.stats.style.display = "block";
+                    this.$.about.style.display = "none";
+                    this.$.stats.getRanking();
+                    this.$.stats.getCards();
+                }
             },
             showAbout:function() {
-                this.$.cards.style.display = "none";
-                this.$.stats.style.display = "none";
-                this.$.about.style.display = "block";
+                if(this.logged){
+                    this.$.cards.style.display = "none";
+                    this.$.stats.style.display = "none";
+                    this.$.about.style.display = "block";
+                }
             },
             signOut:function() {
                 firebase.auth().signOut();
