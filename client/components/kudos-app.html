@@ -32,8 +32,8 @@
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="../bower_components/paper-toast/paper-toast.html">
-<link rel="import" href="../bower_components/neon-animation/animations/scale-up-animation.html">
-<link rel="import" href="../bower_components/neon-animation/animations/fade-out-animation.html">
+<!--<link rel="import" href="../bower_components/neon-animation/animations/scale-up-animation.html">-->
+<!--<link rel="import" href="../bower_components/neon-animation/animations/fade-out-animation.html">-->
 <link rel="import" href="kudos-cards.html">
 <link rel="import" href="kudos-stats.html">
 <link rel="import" href="kudos-about.html">
@@ -74,10 +74,15 @@
                         <div><span class="logo">KUDOS</span> | [[eventName]]</div>
                         <iron-icon icon="icons:events"></iron-icon>
                         <div main-title></div>
-                        <paper-icon-button icon="view-list"   title="Tarjetas"     on-tap="showCards"></paper-icon-button>
-                        <paper-icon-button icon="assessment"  title="Estadísticas" on-tap="showStats"></paper-icon-button>
-                        <paper-icon-button icon="help"        title="Acerca de"    on-tap="showAbout"></paper-icon-button>
-                        <paper-icon-button icon="exit-to-app" title="Salir"        on-tap="signOut"  ></paper-icon-button>
+                        <paper-icon-button icon="view-list"   id="mAgenda" title="Tarjetas"     on-tap="showCards"></paper-icon-button>
+                        <paper-icon-button icon="assessment"  id="mStats"  title="Estadísticas" on-tap="showStats"></paper-icon-button>
+                        <paper-icon-button icon="help"        id="mHelp"   title="Acerca de"    on-tap="showAbout"></paper-icon-button>
+                        <paper-icon-button icon="exit-to-app" id="mExit"   title="Salir"        on-tap="signOut"  ></paper-icon-button>
+                        
+                        <paper-tooltip for="mAgenda" position="bottom" style="max-width:100px;">Agenda</paper-tooltip>
+                        <paper-tooltip for="mStats"  position="bottom" style="max-width:100px;">Estadísticas</paper-tooltip>
+                        <paper-tooltip for="mHelp"   position="bottom" style="max-width:100px;">Ayuda</paper-tooltip>
+                        <paper-tooltip for="mExit"   position="bottom" style="max-width:100px;">Salir</paper-tooltip>
                     </app-toolbar>
                 </app-header>
                 <kudos-cards id="cards" style="display:none"></kudos-cards>

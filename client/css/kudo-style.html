@@ -21,7 +21,7 @@
     
     paper-card {
       font-size:0.9em;
-      margin:5px;
+      margin:6px;
       --paper-card-actions : {
         padding:5px;
         text-align:left;
@@ -251,6 +251,25 @@
     paper-tabs {
       background-color: #81d1f3;
       color: #fff;
+    }
+    
+    ul {
+        list-style: none;
+        padding:0;
+        margin:0;
+    }
+    
+    li { 
+        padding-left: 1em; 
+        text-indent: -.7em;
+    }
+    
+    li:before {
+        content: "• ";
+        color: rgb(09,79,164); 
+    }
+    .resultFeedback {
+      margin: 6px;
     }
     </style>
     </template>

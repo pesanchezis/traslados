@@ -12,8 +12,8 @@
   </paper-tabs>
   
   <iron-pages selected="{{selected}}">
-    <div class="card">
-      <h2>Ranking de participación</h2>
+    <div class="resultFeedback">
+      <h3>Ranking de participación</h3>
       <span id="numUsers">(Número de usuarios: {{numUsers}})</span>
       <template is="dom-repeat" items="{{users}}" as="user">
         <div>
@@ -31,20 +31,21 @@
       </template>
     </div>
     
-    <div class="card">
+    <div class="resultFeedback">
+      <h3>Revisa los comentarios por cada sección</h3>
       <template is="dom-repeat" items="{{cards}}" as="card">
-        <div class="heading" on-click="toggleRanking" data="{{card.id}}" style="background-color:{{card.color}}">
+        <div class="heading" on-click="toggleRanking" data="{{card.id}}" style="background:{{card.color}}">
           {{card.titleBlock}} - {{card.title}}
         </div>
         <iron-collapse id="cl_{{card.id}}">
           <div class="content">
             <div>
-              <span><b>Feedback:</b></span>
-              <div id="fb_{{card.id}}"></div>
+              <span><b>Kudos</b></span>
+              <div id="kd_{{card.id}}"></div>
             </div>
             <div>
-              <span><b>Kudos:</b></span>
-              <div id="kd_{{card.id}}"></div>
+              <span><b>Feedback</b></span>
+              <div id="fb_{{card.id}}"></div>
             </div>
           </div>
         </iron-collapse>
@@ -76,6 +77,9 @@
         type: String,
         notify:true
       },
+      selected: {
+          value: 0
+      }
     },
     getCards:function(){
       var ref = firebase.database().ref("eventos/" + this.activeEvent + "/blocks");
