@@ -79,11 +79,13 @@
           blocks          : {type:Array, notify:true},
           kudos           : {type:Array, notify:true},
           mensajes        : {type:Array, value:function() { return []}},
-          apiRequestBody  : {type:Object}
+          apiRequestBody  : {type:Object},
+          currentCard     : {type:Object, value:function() { return {}}}
         },
         apiResponseHandler: function(data) {
-          var btnCard = Polymer.dom(e).localTarget;
-          var card = btnCard.data;
+          //var btnCard = Polymer.dom(e).localTarget;
+          //var card = btnCard.data;
+          var card = this.currentCard;
           console.log("hs>", card);
           console.log("hs:", data.detail.response);
           var tmpText = data.detail.response.result.fulfillment.speech;
@@ -131,7 +133,7 @@
         },
         openBot:function(e){
           var btnCard = Polymer.dom(e).localTarget;
-          var card = btnCard.data;
+          var card = btnCard.data; this.currentCard = card;
           var self=this;
           this.$.txtMessage.value="";
           this.$.btnSendMessage.data=card.id;
