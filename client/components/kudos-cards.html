@@ -83,14 +83,23 @@
           currentCard     : {type:Object, value:function() { return {}}}
         },
         apiResponseHandler: function(data) {
-          //var btnCard = Polymer.dom(e).localTarget;
-          //var card = btnCard.data;
           var card = this.currentCard;
           console.log("hs>", card);
           console.log("hs:", data.detail.response);
-          var tmpText = data.detail.response.result.fulfillment.speech;
-          var newText = newText.replace("||ambiente||",card.ambiente);
-          var newMessage = { from: card.leader, message: newText, align: "bot_label"};
+          var defaultSpeech = data.detail.response.result.fulfillment.speech;
+          var ambienteSpeech = defaultSpeech.replace("||ambiente||",card.ambiente);
+          var ambiente_fechaSpeech = ambienteSpeech.replace("||ambiente_fecha||",card.ambiente_fecha);
+          var canalSpeech = ambiente_fechaSpeech.replace("||canal||",card.canal);
+          var customerSpeech = canalSpeech.replace("||customer||",card.customer);
+          var detallesSpeech = customerSpeech.replace("||detalles||",card.detalles);
+          var diferenciasSpeech = detallesSpeech.replace("||diferencias||",card.diferencias);
+          var limitacionesSpeech = diferenciasSpeech.replace("||limitaciones||",card.limitaciones);
+          var marketingSpeech = limitacionesSpeech.replace("||marketing||",card.marketing);
+          var metricaSpeech = marketingSpeech.replace("||metrica||",card.metrica);
+          var objetivoSpeech = metricaSpeech.replace("||objetivo||",card.objetivo);
+          var participantesSpeech = objetivoSpeech.replace("||participantes||",card.participantes);
+          var tiempoSpeech = participantesSpeech.replace("||tiempo||",card.tiempo);
+          var newMessage = { from: card.leader, message: tiempoSpeech, align: "bot_label"};
           this.push('mensajes', newMessage);
         },
         getKudos:function(){
@@ -127,6 +136,17 @@
             _card.description=block.cards[card].description;
             _card.color=block.color;
             _card.ambiente=block.cards[card].parameters.ambiente;
+            _card.ambiente_fecha=block.cards[card].parameters.ambiente_fecha;
+            _card.canal=block.cards[card].parameters.canal;
+            _card.customer=block.cards[card].parameters.customer;
+            _card.detalles=block.cards[card].parameters.detalles;
+            _card.diferencias=block.cards[card].parameters.diferencias;
+            _card.limitaciones=block.cards[card].parameters.limitaciones;
+            _card.marketing=block.cards[card].parameters.marketing;
+            _card.metrica=block.cards[card].parameters.metrica;
+            _card.objetivo=block.cards[card].parameters.objetivo;
+            _card.participantes=block.cards[card].parameters.participantes;
+            _card.tiempo=block.cards[card].parameters.tiempo;
             self.push('cards', _card);
           }
           return this.cards;
