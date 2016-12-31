@@ -159,18 +159,8 @@
           this.$.btnSendMessage.data=card.id;
           this.$.titleBot.innerHTML=card.title;
           this.$.bot.open();
-          
           this.set("apiRequestBody", { query : [ "Iniciar con " + this.userFirstName + " en " +card.id ], lang: "es", sessionId: this.userEmail});
           this.$.api.generateRequest();
-          
-          var ref = firebase.database().ref("eventos/" + this.activeEvent + "/users/" + this.userEmail+ "/"+ card.id + "/comments");
-          ref.once('value').then(function(snapshot) {
-            var msg="";
-            if(snapshot.val()!=null){
-              msg=snapshot.val().message;
-            }
-            self.$.txtMessage.value=msg;
-          });
         },
         openModal:function(e){
           var btnCard = Polymer.dom(e).localTarget;
