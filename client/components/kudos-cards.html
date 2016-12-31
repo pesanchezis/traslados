@@ -41,7 +41,7 @@
           <div>
             <h2 id="titleBot">Preguntas para:</h2>
               <template is="dom-repeat" items="{{mensajes}}">
-                  <div class="[[item.align]]">[[item.from]] dice: [[item.message]]</div>
+                  <div class$="[[item.align]]">[[item.from]] dice: [[item.message]]</div>
               </template>
             [[userFirstName]]
             <paper-textarea id="txtMessage" label="Ingresa tu pregunta..."></paper-textarea>
@@ -131,10 +131,10 @@
           this.$.btnSendMessage.data=card.id;
           this.$.titleBot.innerHTML="Preguntas para:<br>" + card.title;
           this.$.bot.open();
-          
+
           this.set("apiRequestBody", { query : [ "Iniciar con " + this.userFirstName + " en " +card.id ], lang: "es", sessionId: this.userEmail});
           this.$.api.generateRequest();
-          
+
           var ref = firebase.database().ref("eventos/" + this.activeEvent + "/users/" + this.userEmail+ "/"+ card.id + "/comments");
           ref.once('value').then(function(snapshot) {
             var msg="";
