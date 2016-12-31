@@ -43,14 +43,17 @@
               <template is="dom-repeat" items="{{mensajes}}">
                   <div class="[[item.align]]">[[item.from]] dice: [[item.message]]</div>
               </template>
-            <paper-input id="txtFrom" label= "From..."></paper-input>
+            [[userFirstName]]
             <paper-textarea id="txtMessage" label="Ingresa tu pregunta..."></paper-textarea>
             <div class="buttons">
               <paper-button id="btnSendMessage" on-click="sendMessage" autofocus>Enviar</paper-button>
-              <paper-button dialog-dismiss>Cerrar</paper-button>
+              <paper-button dialog-dismiss on-click="closeBot">Cerrar</paper-button>
             </div>
           </div>
         </paper-dialog>
+        <iron-ajax id="api" url="https://api.api.ai/v1/query" params='{"v":"20150910"}'
+          headers='{"Authorization": "Bearer 7324e6390faf48fca8c4eb7fb9cc2120","Content-Type": "application/json"}'
+          method='POST' body='{{apiRequestBody}}' on-response="apiResponseHandler" handle-as="json" verbose="true" debounce-duration="300"></iron-ajax>
         <paper-dialog id="feedback" >
           <h2 id="titleFeedback">Feedback para:</h2>
           <paper-textarea id="txtFeedback" label="Ingresa tu feedback..."></paper-textarea>
@@ -65,43 +68,23 @@
       Polymer({
         is: 'kudos-cards',
         properties:{
-          activeEvent:{
-            type: String,
-            notify:true
-          },
-          user :       {type: Object, notify:true},
-          userEmail:   {type: String, notify:true},
-          userName:    {type: String, notify:true},
-          userPicture: {type: String, notify:true},
-          error:{
-            type: Object,
-            value:null,
-            notify:true
-          },
-          cards:{
-            type: Array,
-            notify:true
-          },
-          blocks:{
-            type: Array,
-            notify:true
-          },
-          kudos:{
-            type: Array,
-            notify:true
-          },
-          mensajes:{type:Array,value:function() { return [
-            {from:"Paúl",align:"left",message:"Hola amigos"},
-            {from:"Elvis",align:"right",message:"Oa amig@s"},
-            {from:"Paúl",align:"left",message:"QTH Elbi!"},
-            {from:"Elvis",align:"right",message:"Sorry! Se me chispoteó... Sao!"},
-            {from:"Paúl",align:"left",message:"Ok"},
-            {from:"Paúl",align:"left",message:"Hola amigos"},
-            {from:"Elvis",align:"right",message:"Oa amig@s"},
-            {from:"Paúl",align:"left",message:"QTH Elbi!"},
-            {from:"Elvis",align:"right",message:"Sorry! Se me chispoteó... Sao!"},
-            {from:"Paúl",align:"left",message:"Ok"}
-          ]}}
+          activeEvent     : {type:String, notify:true},
+          user            : {type:Object, notify:true},
+          userFirstName   : {type:String, notify:true},
+          userEmail       : {type:String, notify:true},
+          userName        : {type:String, notify:true},
+          userPicture     : {type:String, notify:true},
+          error           : {type:Object, value:null, notify:true },
+          cards           : {type:Array, notify:true},
+          blocks          : {type:Array, notify:true},
+          kudos           : {type:Array, notify:true},
+          mensajes        : {type:Array, value:function() { return []}},
+          apiRequestBody  : {type:Object}
+        },
+        apiResponseHandler: function(data) {
+          console.log("hs:", data.detail.response);
+          var newMessage = { from: "@mindcraft", message: data.detail.response.result.fulfillment.speech, align: "bot_label"};
+          this.push('mensajes', newMessage);
         },
         getKudos:function(){
           var self = this;
@@ -148,6 +131,10 @@
           this.$.btnSendMessage.data=card.id;
           this.$.titleBot.innerHTML="Preguntas para:<br>" + card.title;
           this.$.bot.open();
+          
+          this.set("apiRequestBody", { query : [ "Iniciar con " + this.userFirstName + " en " +card.id ], lang: "es", sessionId: this.userEmail});
+          this.$.api.generateRequest();
+          
           var ref = firebase.database().ref("eventos/" + this.activeEvent + "/users/" + this.userEmail+ "/"+ card.id + "/comments");
           ref.once('value').then(function(snapshot) {
             var msg="";
@@ -175,12 +162,13 @@
           });
         },
         sendMessage:function(){
-          var alignment = "team";
-          //if (this.$.txtFrom.value == "Elvis") alignment = "right";
-          if (this.$.txtFrom.value == "Paúl") alignment = "bot_label";
-          var newMessage = { from: this.$.txtFrom.value, message: this.$.txtMessage.value, align: alignment};
-          //this.mensajes.push(newMessage);
+          var newMessage = { from: this.userFirstName, message: this.$.txtMessage.value, align: "human_label"};
           this.push('mensajes', newMessage);
+          this.set("apiRequestBody", { query : [ this.$.txtMessage.value ], lang: "es", sessionId: this.userEmail});
+          this.$.api.generateRequest();
+        },
+        closeBot:function(){
+          this.set('mensajes', []);
         },
         sendFeedback:function(){
           var db = firebase.database();

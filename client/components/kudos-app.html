@@ -7,6 +7,7 @@
 <link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
 <link rel="import" href="../bower_components/app-route/app-location.html">
 <link rel="import" href="../bower_components/app-route/app-route.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../bower_components/iron-label/iron-label.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../bower_components/iron-icons/editor-icons.html">
@@ -29,7 +30,7 @@
 <link rel="import" href="../bower_components/paper-styles/demo-pages.html">
 <link rel="import" href="../bower_components/paper-input/paper-textarea.html">
 <link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
-<link rel="import" href="../bower_components/paper-dialog/paper-dialog-scrollable.html">
+<link rel="import" href="../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="../bower_components/paper-toast/paper-toast.html">
@@ -121,6 +122,7 @@
                     if (account) {
                         parent.set('user', account);
                         parent.set('userEmail', account.email);
+                        parent.$.cards.userFirstName = account.displayName.split(' ')[0];
                         parent.$.cards.userEmail = account.email.toString().replace(/[@.]/g,'_');
                         parent.$.cards.userPicture = account.photoURL || '../images/avatar_login.png';
                         parent.$.cards.userName = account.displayName;
