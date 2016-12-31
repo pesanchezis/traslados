@@ -37,17 +37,28 @@
           </paper-card>
           </template>
         </template>
-        <paper-dialog style="overflow-y:scroll" id="bot">
+        <paper-dialog  id="bot">
           <div>
-            <h2 id="titleBot"></h2>
+            <div style="display:inline-block;width:90% !important;align:right;">
+              <b><span id="titleBot"></span></b>
+            </div>
+            <div style="display:inline-block;width:8% !important;align:left;">
+              <paper-icon-button icon="icons:close" on-tap="closeBot"></paper-icon-button>
+            </div>
+          </div>
+          <div>
+            <div style="overflow-y:auto;height:200px !important;padding-bottom:80px;" id="chat">
               <template is="dom-repeat" items="{{mensajes}}">
                   <div class$="[[item.align]]">[[item.from]] dice: [[item.message]]</div>
               </template>
-            [[userFirstName]]
-            <paper-textarea id="txtMessage" label="Ingresa tu pregunta..."></paper-textarea>
-            <div class="buttons">
-              <paper-button id="btnSendMessage" on-click="sendMessage" autofocus>Enviar</paper-button>
-              <paper-button dialog-dismiss on-click="closeBot">Cerrar</paper-button>
+            </div>
+            <div style="width:100%;margin:0px;padding:0px;">
+              <div style="display:inline-block;width:80%;">
+                <paper-textarea id="txtMessage" label="[[userFirstName]], ingresa tu pregunta..."></paper-textarea>
+              </div>
+              <div style="display:inline-block;width:15%;">
+                <paper-icon-button icon="icons:send" id="btnSendMessage" on-tap="sendMessage" autofocus></paper-icon-button>
+              </div>
             </div>
           </div>
         </paper-dialog>
@@ -78,9 +89,16 @@
           cards           : {type:Array, notify:true},
           blocks          : {type:Array, notify:true},
           kudos           : {type:Array, notify:true},
-          mensajes        : {type:Array, value:function() { return []}},
+          mensajes        : {type:Array, value:function() { return []},observer:"mensajesChanged"},
           apiRequestBody  : {type:Object},
           currentCard     : {type:Object, value:function() { return {}}}
+        },
+        ready: function(){
+          // window.setInterval(function() { var elem = document.getElementById('chat'); elem.scrollTop = elem.scrollHeight; }, 2000);
+        },
+        mensajesChanged: function(newVal,oldVal){
+          this.$.chat.scrollTop = this.$.chat.scrollHeight;
+          console.log("mensajesChanged");
         },
         apiResponseHandler: function(data) {
           var card = this.currentCard;
@@ -101,6 +119,9 @@
           var tiempoSpeech = participantesSpeech.replace("||tiempo||",card.tiempo);
           var newMessage = { from: card.leader, message: tiempoSpeech, align: "bot_label"};
           this.push('mensajes', newMessage);
+          console.log("apiResponseHandler: " + this.$.chat.scrollTop + " - height: " + this.$.chat.scrollHeight);
+          this.$.chat.scrollTop = this.$.chat.scrollHeight;
+          console.log("2. apiResponseHandler: " + this.$.chat.scrollTop + " - height: " + this.$.chat.scrollHeight);
         },
         getKudos:function(){
           var self = this;
@@ -189,6 +210,7 @@
         },
         closeBot:function(){
           this.set('mensajes', []);
+          this.$.bot.close();
         },
         sendFeedback:function(){
           var db = firebase.database();

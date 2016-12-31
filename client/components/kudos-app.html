@@ -126,6 +126,7 @@
                         parent.$.cards.userEmail = account.email.toString().replace(/[@.]/g,'_');
                         parent.$.cards.userPicture = account.photoURL || '../images/avatar_login.png';
                         parent.$.cards.userName = account.displayName;
+                        console.log("account.displayName => " + account.displayName);
                         parent.set('userName', account.displayName);
                         parent.set('userPicture', account.photoURL);
                         parent.set('logged', true);
