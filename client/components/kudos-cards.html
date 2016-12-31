@@ -12,12 +12,14 @@
                 <div class="rate-header titleProject" style="background:{{card.color}}">{{block.title}}</div>
                   <div class="rate-name">
                     <div class="div_middle">
-                      <b>{{card.title}}</b> <br> 
+                      <b>{{card.title}}</b> <br>
                       {{card.description}}
                     </div>
                     <div class="div_feedback">
-                      <paper-button class="rate-icon feeback" id="{{card.id}}" data='{{card}}'
-                        on-click="openModal">
+                      <paper-button class="rate-icon bot" id="{{card.id}}" data='{{card}}' on-click="openBot">
+                        Pregúntanos <iron-icon icon="communication:live-help" data='{{card}}'></iron-icon>
+                      </paper-button>
+                      <paper-button class="rate-icon feeback" id="{{card.id}}" data='{{card}}' on-click="openModal">
                         Danos feedback <iron-icon icon="announcement" data='{{card}}'></iron-icon>
                       </paper-button>
                     </div>
@@ -35,6 +37,19 @@
           </paper-card>
           </template>
         </template>
+        <paper-dialog style="overflow-y:scroll;z-index:-1" id="bot">
+          <div class="">
+            <h2 id="titleBot">Preguntas para:</h2>
+              <template is="dom-repeat" items="{{mensajes}}">
+                  <div style="width:100%;text-align:[[item.align]]">[[item.from]] dice: [[item.message]]</div>
+              </template>
+            <paper-textarea id="txtBot" label="Ingresa tu pregunta..."></paper-textarea>
+            <div class="buttons">
+              <paper-button id="btnBot" on-click="sendBot" autofocus>Enviar</paper-button>
+              <paper-button dialog-dismiss>Cerrar</paper-button>
+            </div>
+          </div>
+        </paper-dialog>
         <paper-dialog id="feedback" >
           <h2 id="titleFeedback">Feedback para:</h2>
           <paper-textarea id="txtFeedback" label="Ingresa tu feedback..."></paper-textarea>
@@ -74,6 +89,48 @@
             type: Array,
             notify:true
           },
+          mensajes:{type:Array,value:function() { return [
+            {from:"Paúl",align:"left",message:"Hola amigos"},
+            {from:"Elvis",align:"right",message:"Oa amig@s"},
+            {from:"Paúl",align:"left",message:"QTH Elbi!"},
+            {from:"Elvis",align:"right",message:"Sorry! Se me chispoteó... Sao!"},
+            {from:"Paúl",align:"left",message:"Ok"},
+            {from:"Paúl",align:"left",message:"Hola amigos"},
+            {from:"Elvis",align:"right",message:"Oa amig@s"},
+            {from:"Paúl",align:"left",message:"QTH Elbi!"},
+            {from:"Elvis",align:"right",message:"Sorry! Se me chispoteó... Sao!"},
+            {from:"Paúl",align:"left",message:"Ok"},
+            {from:"Paúl",align:"left",message:"Hola amigos"},
+            {from:"Elvis",align:"right",message:"Oa amig@s"},
+            {from:"Paúl",align:"left",message:"QTH Elbi!"},
+            {from:"Elvis",align:"right",message:"Sorry! Se me chispoteó... Sao!"},
+            {from:"Paúl",align:"left",message:"Ok"},
+            {from:"Paúl",align:"left",message:"Hola amigos"},
+            {from:"Elvis",align:"right",message:"Oa amig@s"},
+            {from:"Paúl",align:"left",message:"QTH Elbi!"},
+            {from:"Elvis",align:"right",message:"Sorry! Se me chispoteó... Sao!"},
+            {from:"Paúl",align:"left",message:"Ok"},
+            {from:"Paúl",align:"left",message:"Hola amigos"},
+            {from:"Elvis",align:"right",message:"Oa amig@s"},
+            {from:"Paúl",align:"left",message:"QTH Elbi!"},
+            {from:"Elvis",align:"right",message:"Sorry! Se me chispoteó... Sao!"},
+            {from:"Paúl",align:"left",message:"Ok"},
+            {from:"Paúl",align:"left",message:"Hola amigos"},
+            {from:"Elvis",align:"right",message:"Oa amig@s"},
+            {from:"Paúl",align:"left",message:"QTH Elbi!"},
+            {from:"Elvis",align:"right",message:"Sorry! Se me chispoteó... Sao!"},
+            {from:"Paúl",align:"left",message:"Ok"},
+            {from:"Paúl",align:"left",message:"Hola amigos"},
+            {from:"Elvis",align:"right",message:"Oa amig@s"},
+            {from:"Paúl",align:"left",message:"QTH Elbi!"},
+            {from:"Elvis",align:"right",message:"Sorry! Se me chispoteó... Sao!"},
+            {from:"Paúl",align:"left",message:"Ok"},
+            {from:"Paúl",align:"left",message:"Hola amigos"},
+            {from:"Elvis",align:"right",message:"Oa amig@s"},
+            {from:"Paúl",align:"left",message:"QTH Elbi!"},
+            {from:"Elvis",align:"right",message:"Sorry! Se me chispoteó... Sao!"},
+            {from:"Paúl",align:"left",message:"Ok"}
+          ]}}
         },
         getKudos:function(){
           var self = this;
@@ -87,7 +144,7 @@
           });
         },
         getBlocks:function(){
-          
+
           var ref = firebase.database().ref("eventos/" + this.activeEvent + "/blocks");
           var self = this;
           ref.once("value").then(function(snapshot) {
@@ -102,7 +159,7 @@
           this.cards=[];
           self=this;
           for (var card in block.cards) {
-            var _card={}; 
+            var _card={};
             _card.titleBlock=block.title;
             _card.color=block.color;
             _card.description=block.cards[card].description;
@@ -111,6 +168,23 @@
             self.push('cards', _card);
           }
           return this.cards;
+        },
+        openBot:function(e){
+          var btnCard = Polymer.dom(e).localTarget;
+          var card = btnCard.data;
+          var self=this;
+          this.$.txtBot.value="";
+          this.$.btnBot.data=card.id;
+          this.$.titleBot.innerHTML="Preguntas para:<br>" + card.title;
+          this.$.bot.open();
+          var ref = firebase.database().ref("eventos/" + this.activeEvent + "/users/" + this.userEmail+ "/"+ card.id + "/comments");
+          ref.once('value').then(function(snapshot) {
+            var msg="";
+            if(snapshot.val()!=null){
+              msg=snapshot.val().message;
+            }
+            self.$.txtBot.value=msg;
+          });
         },
         openModal:function(e){
           var btnCard = Polymer.dom(e).localTarget;
@@ -126,7 +200,7 @@
             if(snapshot.val()!=null){
               msg=snapshot.val().message;
             }
-            self.$.txtFeedback.value=msg; 
+            self.$.txtFeedback.value=msg;
           });
         },
         sendFeedback:function(){
@@ -146,10 +220,10 @@
           };
           //var newPostKey = ref.child('comments').push().key;
           var updates = {};
-          
+
           updates["/" +idCard + "/comments"] = postData;
           updates["/profile"] = userData;
-          ref.update(updates); 
+          ref.update(updates);
           this.$.txtFeedback.value="";
           this.$.feedback.close();
           this.$.toastAlert.open();
@@ -161,7 +235,7 @@
           var idBtnKudo=this.$$('#id_' +idCard +'_' +idKudo);
           var voto = 1;
           if (!idBtnKudo.active){
-            voto = -1;  
+            voto = -1;
           }
           var refControl = firebase.database().ref('eventos/' + this.activeEvent +'/users').child(this.userEmail);
           if(voto > 0) {
@@ -172,7 +246,7 @@
               picture: this.userPicture
             };
             updates["/profile"] = userData;
-            refControl.update(updates); 
+            refControl.update(updates);
           } else {
             firebase.database().ref('eventos/' + this.activeEvent +'/users').child(this.userEmail).child(idCard).child('kudos').child(idKudo).remove();
           }
