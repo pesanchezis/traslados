@@ -39,7 +39,7 @@
         </template>
         <paper-dialog style="overflow-y:scroll;z-index:1000" id="bot">
           <div>
-            <h2 id="titleBot">Preguntas para:</h2>
+            <h2 id="titleBot"></h2>
               <template is="dom-repeat" items="{{mensajes}}">
                   <div class="[[item.align]]">[[item.from]] dice: [[item.message]]</div>
               </template>
@@ -82,8 +82,13 @@
           apiRequestBody  : {type:Object}
         },
         apiResponseHandler: function(data) {
+          var btnCard = Polymer.dom(e).localTarget;
+          var card = btnCard.data;
+          console.log("hs>", card);
           console.log("hs:", data.detail.response);
-          var newMessage = { from: "@mindcraft", message: data.detail.response.result.fulfillment.speech, align: "bot_label"};
+          var tmpText = data.detail.response.result.fulfillment.speech;
+          var newText = newText.replace("||ambiente||",card.ambiente);
+          var newMessage = { from: card.leader, message: newText, align: "bot_label"};
           this.push('mensajes', newMessage);
         },
         getKudos:function(){
@@ -98,7 +103,6 @@
           });
         },
         getBlocks:function(){
-
           var ref = firebase.database().ref("eventos/" + this.activeEvent + "/blocks");
           var self = this;
           ref.once("value").then(function(snapshot) {
@@ -115,10 +119,12 @@
           for (var card in block.cards) {
             var _card={};
             _card.titleBlock=block.title;
-            _card.color=block.color;
-            _card.description=block.cards[card].description;
-            _card.title=block.cards[card].title;
             _card.id=card;
+            _card.title=block.cards[card].title;
+            _card.leader=block.cards[card].leader;
+            _card.description=block.cards[card].description;
+            _card.color=block.color;
+            _card.ambiente=block.cards[card].parameters.ambiente;
             self.push('cards', _card);
           }
           return this.cards;
@@ -129,7 +135,7 @@
           var self=this;
           this.$.txtMessage.value="";
           this.$.btnSendMessage.data=card.id;
-          this.$.titleBot.innerHTML="Preguntas para:<br>" + card.title;
+          this.$.titleBot.innerHTML=card.title;
           this.$.bot.open();
           
           this.set("apiRequestBody", { query : [ "Iniciar con " + this.userFirstName + " en " +card.id ], lang: "es", sessionId: this.userEmail});
@@ -166,6 +172,7 @@
           this.push('mensajes', newMessage);
           this.set("apiRequestBody", { query : [ this.$.txtMessage.value ], lang: "es", sessionId: this.userEmail});
           this.$.api.generateRequest();
+          this.$.txtMessage.value = "";
         },
         closeBot:function(){
           this.set('mensajes', []);
