@@ -14,11 +14,11 @@
       transition: height 0.2s;
       background-color: blue !important;
     }
-    
+
     #feedback{
-        z-index: 99999 !important;    
+        z-index: 99999 !important;
     }
-    
+
     paper-card {
       font-size:0.9em;
       margin:6px;
@@ -27,8 +27,8 @@
         text-align:left;
       };
     }
-    paper-card.rate { 
-      @apply(--layout-horizontal); 
+    paper-card.rate {
+      @apply(--layout-horizontal);
     }
     .rate-content {
       width: 100%;
@@ -49,7 +49,7 @@
     }
     paper-icon-button.rate-ico[active]{
     }
-    
+
     paper-button.green {
       background-color: #4285f4;
       color: white;
@@ -87,11 +87,19 @@
       text-align:right;
       padding: 0px;
     }
+    .bot_label{
+      display:inline-block;
+      right: 0px;
+      width:50%;
+      text-align:left;
+      padding: 0px;
+      border: 1px solid aliceblue;
+    }
     .kudos {
       width:95%;
       margin: auto;
       padding: 10px;
-    }    
+    }
     .team{
       background-color: #89d1f3;
       border-radius: 50%;
@@ -103,8 +111,8 @@
       color: #fff;
       background-color: rbg(00,110,193);
     }
-    
-    
+
+
     paper-button.kudo {
       background-color: #999999; /*#FFF5E0;*/
       color: white;
@@ -115,12 +123,12 @@
       min-width: 40px!important;*/
       font-size: x-small;
       text-transform: none! important;
-      margin: 2px; 
+      margin: 2px;
       padding-left: 3px;
       padding-top: 2px;
       padding-bottom:2px;
       float:left;
-    } 
+    }
     paper-button.kudo[active] {
       background-color: #82C82D;
     }
@@ -138,7 +146,7 @@
           width: 200px;
           height: 120px;
       }
-      
+
       /* resize images */
       .container img {
         width: 100%;
@@ -152,7 +160,7 @@
         display:inline-block !important;
         margin: 5px !important;
       }
-      
+
       .image {
           width:60px;
           height:70px !important;
@@ -169,7 +177,7 @@
         min-width: 85px !important;
         font-size: x-small;
         text-transform: none! important;
-        margin: 5px; 
+        margin: 5px;
         padding-left: 3px;
         padding-top: 2px;
         padding-bottom:2px;
@@ -177,7 +185,7 @@
       paper-button.kudo[active] {
         background-color: #82C82D;
       }
-      
+
       .card {
         margin: 24px;
         padding: 16px;
@@ -226,7 +234,7 @@
       font-size: 14px;
       margin: 10px 0;
     }
-    
+
     .heading {
       padding: 10px 15px;
       margin-top: 20px;
@@ -254,21 +262,21 @@
       background-color: #81d1f3;
       color: #fff;
     }
-    
+
     ul {
         list-style: none;
         padding:0;
         margin:0;
     }
-    
-    li { 
-        padding-left: 1em; 
+
+    li {
+        padding-left: 1em;
         text-indent: -.7em;
     }
-    
+
     li:before {
         content: "• ";
-        color: rgb(09,79,164); 
+        color: rgb(09,79,164);
     }
     .resultFeedback {
       margin: 6px;
