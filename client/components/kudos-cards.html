@@ -37,7 +37,7 @@
           </paper-card>
           </template>
         </template>
-        <paper-dialog style="overflow-y:scroll;z-index:1000" id="bot">
+        <paper-dialog style="overflow-y:scroll" id="bot">
           <div>
             <h2 id="titleBot"></h2>
               <template is="dom-repeat" items="{{mensajes}}">
@@ -89,7 +89,7 @@
           console.log("hs>", card);
           console.log("hs:", data.detail.response);
           var tmpText = data.detail.response.result.fulfillment.speech;
-          var newText = newText.replace("||ambiente||",card.ambiente);
+          var newText = tmpText.replace("||ambiente||",card.ambiente);
           var newMessage = { from: card.leader, message: newText, align: "bot_label"};
           this.push('mensajes', newMessage);
         },
