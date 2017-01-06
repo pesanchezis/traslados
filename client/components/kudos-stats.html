@@ -4,14 +4,20 @@
  <style include="cards"></style>
  <style include="stats"></style>
   <div class="card">
-    <h3>Resultados macrocomité 4T</h3>
+    <h3>Resultados macrocomité 2017-I</h3>
   </div>
   <paper-tabs selected="{{selected}}">
-    <paper-tab>Ranking</paper-tab>
+    <paper-tab>Valoraciones</paper-tab>
+    <paper-tab>Agradecimientos</paper-tab>
     <paper-tab>Feedback</paper-tab>
   </paper-tabs>
-  
+
   <iron-pages selected="{{selected}}">
+    <div class="resultFeedback">
+      <h3>Ranking general</h3>
+
+    </div>
+
     <div class="resultFeedback">
       <h3>Ranking por Feedback</h3>
       <span id="numUsers">(Número de usuarios: {{numUsers}})</span>
@@ -23,14 +29,14 @@
               <div class="primary">[[user.name]]</div>
               <address>
                 <div class="userSection">Feedbacks: [[user.numFeedback]]</div>
-                <div class="userSection">Kudos: [[user.numKudos]]</div>                
+                <div class="userSection">Kudos: [[user.numKudos]]</div>
               </address>
             </div>
           </div>
         </div>
       </template>
     </div>
-    
+
     <div class="resultFeedback">
       <h3>Revisa los comentarios por cada sección</h3>
       <template is="dom-repeat" items="{{cards}}" as="card">
@@ -54,7 +60,7 @@
   </iron-pages>
 </template>
 <script>
- Polymer({ 
+ Polymer({
     is: 'kudos-stats',
     properties: {
       activeEvent:{
@@ -94,8 +100,8 @@
             card.titleBlock=block.title;
             card.color=block.color;
             card.id=idCard;
-            self.push('cards', card);  
-          }  
+            self.push('cards', card);
+          }
         });
       });
     },
@@ -190,7 +196,7 @@
         }
         self.numUsers=numUsers;
       });
-      
+
     },
     toggleRanking:function(e) {
       var idCard=Polymer.dom(e).localTarget.data;
