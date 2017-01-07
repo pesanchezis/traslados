@@ -39,7 +39,6 @@
         ready: function(){
         },
         mensajesChanged: function(newVal,oldVal){
-          
         },
         apiResponseHandler: function(data) {
           var card = this.currentCard;
@@ -58,9 +57,12 @@
           var tiempoSpeech = participantesSpeech.replace("||tiempo||",card.tiempo);
           var newMessage = { from: card.leader, message: tiempoSpeech, align: "bot_label"};
           this.push('mensajes', newMessage);
+          var divChat=this.$.chat;
+          setTimeout(function(){ 
+            divChat.scrollTop=divChat.scrollHeight;
+           }, 100);
           //console.info(this.$.chat.scrollTop);
           //console.info(this.$.chat.scrollHeight);
-
           //this.$.chat.scrollIntoView(false);
           //this.$.chat.scrollBy(0, 1000);
         },
