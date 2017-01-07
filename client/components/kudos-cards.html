@@ -24,7 +24,7 @@
                       </paper-button>
                     </div>
                   </div>
-              </div>
+                </div>
                 <div class="card-actions">
                   <template id="tmtKudo" is="dom-repeat" items="{{kudos}}" as="kudo">
                     {{getKudosUser(card.id,kudo.id)}}
@@ -34,6 +34,8 @@
                     <paper-tooltip for="id_{{card.id}}_{{kudo.id}}" position="top" style="max-width:100px;">{{kudo.title}}<br> {{kudo.description}}</paper-tooltip>
                   </template>
                 </div>
+                <star-rating stars="5" rate="3"></star-rating>
+              </div>
           </paper-card>
           </template>
         </template>
