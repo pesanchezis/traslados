@@ -17,7 +17,7 @@
       <h3>Ranking general</h3>
       <template is="dom-repeat" items="{{cards}}" as="card">
         <div style="text-align:left;margin-left:10px;">
-            <div id="estrella_{{card.id}}" style="vertical-align:middle;display:inline-block; font-weight:bold; width:12px;"></div>
+            <div id="estrella_{{card.id}}" data=0 style="vertical-align:middle;display:inline-block; font-weight:bold; width:12px;"></div>
             <div style="display:inline-block;width: 30px;"><iron-icon icon="icons:star" style="color:#dada0c;width:20px;height:17px;"></iron-icon></div>
             <div style="vertical-align:middle;display:inline-block;">{{card.title}}</div>
       </div>
@@ -106,6 +106,7 @@
             card.titleBlock=block.title;
             card.color=block.color;
             card.id=idCard;
+            card.rating=0;
             self.push('cards', card);
           }
         });
@@ -194,21 +195,30 @@
                   }
                 }
               }else if(prop == 'rating'){
-                var rating = users[user][card]['rating'];
+                console.log("rating: " + users[user][card]['rating']);
+                var rating =0;
                 if(users[user][card]['rating'] == null){
                   rating = 0;
-                }
-                var strRating="";var totRating=0;
-
-                if(self.$$('#estrella_' +card)==null){
-                  totRating=0;
                 }else{
-                  strRating= self.$$('#estrella_' +card).innerHTML;
-                  totRating=parseInt(strRating);
-                  totRating=totRating+rating;
-                  self.$$('#estrella_' +card).innerHTML=totRating;
+                  rating = users[user][card]['rating'];
                 }
+                var strRating="";
+                var totRating=0;
 
+                if(self.$$('#estrella_' +card).data==undefined){
+                  console.info("no existe estrella");
+                  totRating=0;
+
+                }else{
+                  strRating= self.$$('#estrella_' +card).data;
+                  totRating=parseInt(strRating);
+                  console.info("existe estrella: " + strRating);
+                  console.info("existe estrella 2 : " + totRating);
+                }
+                  totRating=totRating+rating;
+                  self.$$('#estrella_' +card).data=totRating;
+                  self.$$('#estrella_' +card).innerHTML=totRating;
+                  //self.cards[card].rating=totRating;
               }
             }
           }
@@ -216,6 +226,7 @@
           _user.numFeedback=numFeedback;
           self.push('users',_user);
           self.users.sort(function(a,b) {return (a.numFeedback > b.numFeedback) ? -1 : ((b.numFeedback > a.numFeedback) ? 1 : 0);} );
+          self.cards.sort(function(a,b) {return (a.rating > b.rating) ? -1 : ((b.rating > a.rating) ? 1 : 0);} );
         }
         self.numUsers=numUsers;
       });
