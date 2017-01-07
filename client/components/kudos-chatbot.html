@@ -7,8 +7,8 @@
             <b><span id="titleBot"></span></b>
           </div>
         </div>
-        <div>
-          <div style="overflow-y:auto;height:200px !important;padding-bottom:80px;" id="chat">
+        <div style="height: 85vh;">
+          <div style="overflow-y:auto;height:70vh;" id="chat">
             <template is="dom-repeat" items="{{mensajes}}">
                 <div class$="[[item.align]]">[[item.from]] dice: [[item.message]]</div>
             </template>
@@ -39,7 +39,7 @@
         ready: function(){
         },
         mensajesChanged: function(newVal,oldVal){
-          this.$.chat.scrollTop = this.$.chat.scrollHeight;
+          
         },
         apiResponseHandler: function(data) {
           var card = this.currentCard;
@@ -58,7 +58,11 @@
           var tiempoSpeech = participantesSpeech.replace("||tiempo||",card.tiempo);
           var newMessage = { from: card.leader, message: tiempoSpeech, align: "bot_label"};
           this.push('mensajes', newMessage);
-          this.$.chat.scrollTop = this.$.chat.scrollHeight;
+          //console.info(this.$.chat.scrollTop);
+          //console.info(this.$.chat.scrollHeight);
+
+          //this.$.chat.scrollIntoView(false);
+          //this.$.chat.scrollBy(0, 1000);
         },
         initBot:function(btn){
           var btnCard = btn;
