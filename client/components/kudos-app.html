@@ -137,7 +137,7 @@
                         parent.$.cards.userName = account.displayName;
                         parent.$.chatbot.userFirstName = account.displayName.split(' ')[0];
                         parent.$.chatbot.userEmail = account.email.toString().replace(/[@.]/g,'_');
-                        console.log("account.displayName => " + account.displayName);
+                        //console.log("account.displayName => " + account.displayName);
                         parent.set('userName', account.displayName);
                         parent.set('userPicture', account.photoURL);
                         parent.set('logged', true);

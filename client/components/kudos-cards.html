@@ -11,56 +11,58 @@
     <!-- Lista de Bloques -->
     <template id="arrBlocks" is="dom-repeat" items="{{blocks}}" as="block">
       <paper-card style="width:100%">
-        <div class="rate-header titleProject" style="background:{{block.color}}">Bloque {{block.title}}</div>
-        <!-- Lista de Tarjetas x Bloque -->
-        <template id="arrCards" is="dom-repeat" items="{{_getCards(block)}}" as="card">
-          <paper-card class="rate">
-            <div class="rate-content">
-              <div>
-                <div class="rate-header titleProject" style="background:{{card.color}}">{{card.title}}</div>
-                <div class="rate-name">
-                  <div class="div_middle">{{card.description}}</div>
-                  <div class="div_feedback">
-                    <paper-button class="rate-icon bot" id="{{card.id}}" data='{{card}}' on-click="openBot" style$="display:[[card.withChat]]">
-                      Pregúntanos algo<iron-icon icon="communication:live-help" data='{{card}}'></iron-icon>
-                    </paper-button>
-                    <paper-button class="rate-icon feeback" id="{{card.id}}" data='{{card}}' on-click="openModal">
-                      Danos feedback <iron-icon icon="announcement" data='{{card}}'></iron-icon>
-                    </paper-button>
+        <div class="rate-header titleProject" style="background:{{block.color}}" on-click="ocultar" data-args$="[[block.title]]">Bloque {{block.title}}</div>
+        <iron-collapse id="clp_[[block.title]]" style="width:100%;">
+          <!-- Lista de Tarjetas x Bloque -->
+          <template id="arrCards" is="dom-repeat" items="{{_getCards(block)}}" as="card">
+            <paper-card class="rate">
+              <div class="rate-content">
+                <div>
+                  <div class="rate-header titleProject" style="background:{{card.color}}">{{card.title}}</div>
+                  <div class="rate-name">
+                    <div class="div_middle">{{card.description}}</div>
+                    <div class="div_feedback">
+                      <paper-button class="rate-icon bot" id="{{card.id}}" data='{{card}}' on-click="openBot" style$="display:[[card.withChat]]">
+                        Pregúntanos algo<iron-icon icon="communication:live-help" data='{{card}}'></iron-icon>
+                      </paper-button>
+                      <paper-button class="rate-icon feeback" id="{{card.id}}" data='{{card}}' on-click="openModal">
+                        Danos feedback <iron-icon icon="announcement" data='{{card}}'></iron-icon>
+                      </paper-button>
+                    </div>
                   </div>
                 </div>
-                
-              </div>
-              <div class="card-actions">
-                <!-- Lista de Kudos X Tarjeta -->
-                <template id="tmtKudo" is="dom-repeat" items="{{kudos}}" as="kudo">
-                  {{getKudosUser(card.id,kudo.id)}}
-                  <paper-button class="kudo" toggles  id="id_{{card.id}}_{{kudo.id}}" on-click="valorar">
-                    <iron-icon icon="{{kudo.icon}}"></iron-icon> {{kudo.title}}
-                  </paper-button>
-                  <paper-tooltip for="id_{{card.id}}_{{kudo.id}}" position="top" style="max-width:100px;">{{kudo.title}}<br>{{kudo.description}}</paper-tooltip>
-                </template>
-              </div>
-              <!-- prueba de concepto-->
-              <div>
-                <star-rating stars="5" id="star_{{card.id}}" on-click="rankear" ></star-rating>
-                {{getRatingCardUser(card.id)}}
+                <div class="card-actions">
+                  <!-- Lista de Kudos X Tarjeta -->
+                  <template id="tmtKudo" is="dom-repeat" items="{{kudos}}" as="kudo">
+                    {{getKudosUser(card.id,kudo.id)}}
+                    <paper-button class="kudo" toggles  id="id_{{card.id}}_{{kudo.id}}" on-click="valorar">
+                      <iron-icon icon="{{kudo.icon}}"></iron-icon> {{kudo.title}}
+                    </paper-button>
+                    <paper-tooltip for="id_{{card.id}}_{{kudo.id}}" position="top" style="max-width:100px;">{{kudo.title}}<br>{{kudo.description}}</paper-tooltip>
+                  </template>
+                </div>
+                <!-- prueba de concepto-->
+                <div>
+                  <star-rating stars="5" id="star_{{card.id}}" on-click="rankear" ></star-rating>
+                  {{getRatingCardUser(card.id)}}
+                </div>
               </div>
             </paper-card>
           </template>
-          </paper-card>
-        </template>
-        <paper-dialog id="feedback" >
-          <h2 id="titleFeedback">Feedback para:</h2>
-          <paper-textarea id="txtFeedback" label="Escribe tu feedback..."></paper-textarea>
-          <div class="buttons">
-            <paper-button id="btnFeedback" on-click="sendFeedback" autofocus>Enviar</paper-button>
-            <paper-button dialog-dismiss>Cancelar</paper-button>
-          </div>
-        </paper-dialog>
-        <paper-toast id="toastAlert" text="Gracias por tu feedback"></paper-toast>
+        </iron-collapse>
+      </paper-card>
     </template>
-    <script>
+    <paper-dialog id="feedback" >
+      <h2 id="titleFeedback">Feedback para:</h2>
+      <paper-textarea id="txtFeedback" label="Escribe tu feedback..."></paper-textarea>
+      <div class="buttons">
+        <paper-button id="btnFeedback" on-click="sendFeedback" autofocus>Enviar</paper-button>
+        <paper-button dialog-dismiss>Cancelar</paper-button>
+      </div>
+    </paper-dialog>
+    <paper-toast id="toastAlert" text="Gracias por tu feedback"></paper-toast>
+  </template>
+  <script>
       Polymer({
         is: 'kudos-cards',
         properties:{
@@ -75,18 +77,21 @@
           blocks          : {type:Array, notify:true},
           kudos           : {type:Array, notify:true},
         },
+        ocultar: function(e) {
+          this.$$('#clp_'+e.target.dataset.args).toggle();
+        },
         ready: function(){
         },
-        getKudos:function(){   
-            var self = this;    
-            firebase.database().ref('eventos/' + this.activeEvent + '/kudos').once('value').then(function(snapshot) {   
-              self.kudos = [];    
-              snapshot.forEach(function(child) {    
-                var kudo = child.val();   
-                kudo.id=child.key;    
-                self.push('kudos', kudo);   
-              });   
-            });   
+        getKudos:function(){
+            var self = this;
+            firebase.database().ref('eventos/' + this.activeEvent + '/kudos').once('value').then(function(snapshot) {
+              self.kudos = [];
+              snapshot.forEach(function(child) {
+                var kudo = child.val();
+                kudo.id=child.key;
+                self.push('kudos', kudo);
+              });
+            });
           },
         getBlocks:function(){
           var ref = firebase.database().ref("eventos/" + this.activeEvent + "/blocks");
