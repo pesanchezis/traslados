@@ -67,7 +67,15 @@
           this.$.txtMessage.value="";
           this.$.btnSendMessage.data=card.id;
           this.$.titleBot.innerHTML=card.title;
-          this.set("apiRequestBody", { query : [ "Iniciar con " + this.userFirstName + " en " +card.id ], lang: "es", sessionId: this.userEmail});
+          this.$.bot.open();
+          var query = "Iniciar con " + this.userFirstName + " en " +card.id;
+          query = query.replace("á", "a"); query = query.replace("Á", "A");
+          query = query.replace("é", "e"); query = query.replace("É", "E");
+          query = query.replace("í", "i"); query = query.replace("Í", "I");
+          query = query.replace("ó", "o"); query = query.replace("Ó", "O");
+          query = query.replace("ú", "u"); query = query.replace("Ú", "U");
+          query = query.replace("ñ", "n"); query = query.replace("Ñ", "N");
+          this.set("apiRequestBody", { query : [ query ], lang: "es", sessionId: this.userEmail});
           this.$.api.generateRequest();
         },
         sendMessage:function(){
