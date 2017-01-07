@@ -75,17 +75,6 @@
         },
         ready: function(){
         },
-        getKudos:function(){
-          var self = this;
-          firebase.database().ref('eventos/' + this.activeEvent + '/kudos').once('value').then(function(snapshot) {
-            self.kudos = [];
-            snapshot.forEach(function(child) {
-              var kudo = child.val();
-              kudo.id=child.key;
-              self.push('kudos', kudo);
-            });
-          });
-        },
         getBlocks:function(){
           var ref = firebase.database().ref("eventos/" + this.activeEvent + "/blocks");
           var self = this;
@@ -195,6 +184,15 @@
           ref.once('value').then(function(snapshot) {
             if(snapshot.val()!=null){
                 self.$$('#id_' +idCard +'_' +idKudo).active=snapshot.val();
+            }
+          });
+        },
+        getRatingCardUser:function(idCard){
+          self=this;
+          var ref = firebase.database().ref("eventos/" + this.activeEvent + "/users/" + this.userEmail + "/" + idCard + "/rating/");
+          ref.once('value').then(function(snapshot) {
+            if(snapshot.val()!=null){
+              self.$$('#rating_' +idCard).rate=snapshot.val();
             }
           });
         }
