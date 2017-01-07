@@ -1,72 +1,51 @@
 <dom-module id="kudos-cards">
-<link rel="import" href="../css/kudo-style.html">
-    <template>
-        <style include="cards"></style>
-        <img id="imgProfile" class="avatar" src="{{userPicture}}">
-        ¡Bienvenido {{userName}}!
-        <template id="resultList" is="dom-repeat" items="{{blocks}}" as="block">
-          <template is="dom-repeat" items="{{_getCards(block)}}" as="card">
+  <link rel="import" href="../css/kudo-style.html">
+  <template>
+    <style include="cards"></style>
+    <!-- Bienvenida -->
+    <div style="display:table">
+      <img id="imgProfile" class="avatar" src="{{userPicture}}">
+      <div style="display:table-cell;vertical-align:middle"> ¡Bienvenid@ {{userFirstName}}!</div>
+    </div>
+    <!-- Lista de Bloques -->
+    <template id="arrBlocks" is="dom-repeat" items="{{blocks}}" as="block">
+      <paper-card style="width:100%">
+        <div class="rate-header titleProject" style="background:{{block.color}}">Bloque {{block.title}}</div>
+        <!-- Lista de Tarjetas x Bloque -->
+        <template id="arrCards" is="dom-repeat" items="{{_getCards(block)}}" as="card">
           <paper-card class="rate">
             <div class="rate-content">
               <div>
-                <div class="rate-header titleProject" style="background:{{card.color}}">{{block.title}}</div>
-                  <div class="rate-name">
-                    <div class="div_middle">
-                      <b>{{card.title}}</b> <br>
-                      {{card.description}}
-                    </div>
-                    <div class="div_feedback">
-                      <paper-button class="rate-icon bot" id="{{card.id}}" data='{{card}}' on-click="openBot">
-                        Pregúntanos <iron-icon icon="communication:live-help" data='{{card}}'></iron-icon>
-                      </paper-button>
-                      <paper-button class="rate-icon feeback" id="{{card.id}}" data='{{card}}' on-click="openModal">
-                        Danos feedback <iron-icon icon="announcement" data='{{card}}'></iron-icon>
-                      </paper-button>
-                    </div>
+                <div class="rate-header titleProject" style="background:{{card.color}}">{{card.title}}</div>
+                <div class="rate-name">
+                  <div class="div_middle">{{card.description}}</div>
+                  <div class="div_feedback">
+                    <paper-button class="rate-icon bot" id="{{card.id}}" data='{{card}}' on-click="openBot" style$="display:[[card.withChat]]">
+                      Pregúntanos algo<iron-icon icon="communication:live-help" data='{{card}}'></iron-icon>
+                    </paper-button>
+                    <paper-button class="rate-icon feeback" id="{{card.id}}" data='{{card}}' on-click="openModal">
+                      Danos feedback <iron-icon icon="announcement" data='{{card}}'></iron-icon>
+                    </paper-button>
                   </div>
                 </div>
-                <div class="card-actions">
-                  <template id="tmtKudo" is="dom-repeat" items="{{kudos}}" as="kudo">
-                    {{getKudosUser(card.id,kudo.id)}}
-                    <paper-button class="kudo" toggles  id="id_{{card.id}}_{{kudo.id}}" on-click="valorar">
-                      <iron-icon icon="{{kudo.icon}}"></iron-icon> {{kudo.title}}
-                    </paper-button>
-                    <paper-tooltip for="id_{{card.id}}_{{kudo.id}}" position="top" style="max-width:100px;">{{kudo.title}}<br> {{kudo.description}}</paper-tooltip>
-                  </template>
-                </div>
+                
+              </div>
+              <div class="card-actions">
+                <!-- Lista de Kudos X Tarjeta -->
+                <template id="tmtKudo" is="dom-repeat" items="{{kudos}}" as="kudo">
+                  {{getKudosUser(card.id,kudo.id)}}
+                  <paper-button class="kudo" toggles  id="id_{{card.id}}_{{kudo.id}}" on-click="valorar">
+                    <iron-icon icon="{{kudo.icon}}"></iron-icon> {{kudo.title}}
+                  </paper-button>
+                  <paper-tooltip for="id_{{card.id}}_{{kudo.id}}" position="top" style="max-width:100px;">{{kudo.title}}<br>{{kudo.description}}</paper-tooltip>
+                </template>
+              </div>
+              <div>
                 <star-rating stars="5" rate="3"></star-rating>
               </div>
-          </paper-card>
-          </template>
+            </paper-card>
+          </template></paper-card>
         </template>
-        <paper-dialog  id="bot">
-          <div>
-            <div style="display:inline-block;width:90% !important;align:right;">
-              <b><span id="titleBot"></span></b>
-            </div>
-            <div style="display:inline-block;width:8% !important;align:left;">
-              <paper-icon-button icon="icons:close" on-tap="closeBot"></paper-icon-button>
-            </div>
-          </div>
-          <div>
-            <div style="overflow-y:auto;height:200px !important;padding-bottom:80px;" id="chat">
-              <template is="dom-repeat" items="{{mensajes}}">
-                  <div class$="[[item.align]]">[[item.from]] dice: [[item.message]]</div>
-              </template>
-            </div>
-            <div style="width:100%;margin:0px;padding:0px;">
-              <div style="display:inline-block;width:80%;">
-                <paper-textarea id="txtMessage" label="[[userFirstName]], ingresa tu pregunta..."></paper-textarea>
-              </div>
-              <div style="display:inline-block;width:15%;">
-                <paper-icon-button icon="icons:send" id="btnSendMessage" on-tap="sendMessage" autofocus></paper-icon-button>
-              </div>
-            </div>
-          </div>
-        </paper-dialog>
-        <iron-ajax id="api" url="https://api.api.ai/v1/query" params='{"v":"20150910"}'
-          headers='{"Authorization": "Bearer 7324e6390faf48fca8c4eb7fb9cc2120","Content-Type": "application/json"}'
-          method='POST' body='{{apiRequestBody}}' on-response="apiResponseHandler" handle-as="json" verbose="true" debounce-duration="300"></iron-ajax>
         <paper-dialog id="feedback" >
           <h2 id="titleFeedback">Feedback para:</h2>
           <paper-textarea id="txtFeedback" label="Ingresa tu feedback..."></paper-textarea>
@@ -91,39 +70,8 @@
           cards           : {type:Array, notify:true},
           blocks          : {type:Array, notify:true},
           kudos           : {type:Array, notify:true},
-          mensajes        : {type:Array, value:function() { return []},observer:"mensajesChanged"},
-          apiRequestBody  : {type:Object},
-          currentCard     : {type:Object, value:function() { return {}}}
         },
         ready: function(){
-          // window.setInterval(function() { var elem = document.getElementById('chat'); elem.scrollTop = elem.scrollHeight; }, 2000);
-        },
-        mensajesChanged: function(newVal,oldVal){
-          this.$.chat.scrollTop = this.$.chat.scrollHeight;
-          console.log("mensajesChanged");
-        },
-        apiResponseHandler: function(data) {
-          var card = this.currentCard;
-          console.log("hs>", card);
-          console.log("hs:", data.detail.response);
-          var defaultSpeech = data.detail.response.result.fulfillment.speech;
-          var ambienteSpeech = defaultSpeech.replace("||ambiente||",card.ambiente);
-          var ambiente_fechaSpeech = ambienteSpeech.replace("||ambiente_fecha||",card.ambiente_fecha);
-          var canalSpeech = ambiente_fechaSpeech.replace("||canal||",card.canal);
-          var customerSpeech = canalSpeech.replace("||customer||",card.customer);
-          var detallesSpeech = customerSpeech.replace("||detalles||",card.detalles);
-          var diferenciasSpeech = detallesSpeech.replace("||diferencias||",card.diferencias);
-          var limitacionesSpeech = diferenciasSpeech.replace("||limitaciones||",card.limitaciones);
-          var marketingSpeech = limitacionesSpeech.replace("||marketing||",card.marketing);
-          var metricaSpeech = marketingSpeech.replace("||metrica||",card.metrica);
-          var objetivoSpeech = metricaSpeech.replace("||objetivo||",card.objetivo);
-          var participantesSpeech = objetivoSpeech.replace("||participantes||",card.participantes);
-          var tiempoSpeech = participantesSpeech.replace("||tiempo||",card.tiempo);
-          var newMessage = { from: card.leader, message: tiempoSpeech, align: "bot_label"};
-          this.push('mensajes', newMessage);
-          console.log("apiResponseHandler: " + this.$.chat.scrollTop + " - height: " + this.$.chat.scrollHeight);
-          this.$.chat.scrollTop = this.$.chat.scrollHeight;
-          console.log("2. apiResponseHandler: " + this.$.chat.scrollTop + " - height: " + this.$.chat.scrollHeight);
         },
         getKudos:function(){
           var self = this;
@@ -148,43 +96,31 @@
           });
         },
         _getCards:function(block){
-          this.cards=[];
-          self=this;
+          this.cards = [];
+          self = this;
           for (var card in block.cards) {
-            var _card={};
-            _card.titleBlock=block.title;
-            _card.id=card;
-            _card.title=block.cards[card].title;
-            _card.leader=block.cards[card].leader;
-            _card.description=block.cards[card].description;
-            _card.color=block.color;
-            _card.ambiente=block.cards[card].parameters.ambiente;
-            _card.ambiente_fecha=block.cards[card].parameters.ambiente_fecha;
-            _card.canal=block.cards[card].parameters.canal;
-            _card.customer=block.cards[card].parameters.customer;
-            _card.detalles=block.cards[card].parameters.detalles;
-            _card.diferencias=block.cards[card].parameters.diferencias;
-            _card.limitaciones=block.cards[card].parameters.limitaciones;
-            _card.marketing=block.cards[card].parameters.marketing;
-            _card.metrica=block.cards[card].parameters.metrica;
-            _card.objetivo=block.cards[card].parameters.objetivo;
-            _card.participantes=block.cards[card].parameters.participantes;
-            _card.tiempo=block.cards[card].parameters.tiempo;
-            self.push('cards', _card);
+            var newCard = { id:card, title:block.cards[card].title, description:block.cards[card].description,
+              leader:block.cards[card].leader, color:block.cards[card].color, withChat:block.cards[card].withChat };
+            //parameters
+            newCard.objetivo        =block.cards[card].parameters.objetivo;
+            newCard.detalles        =block.cards[card].parameters.detalles;
+            newCard.metrica         =block.cards[card].parameters.metrica;
+            newCard.customer        =block.cards[card].parameters.customer;
+            newCard.canal           =block.cards[card].parameters.canal;
+            newCard.ambiente        =block.cards[card].parameters.ambiente;
+            newCard.ambiente_fecha  =block.cards[card].parameters.ambiente_fecha;
+            newCard.tiempo          =block.cards[card].parameters.tiempo;
+            newCard.participantes   =block.cards[card].parameters.participantes;
+            newCard.diferencias     =block.cards[card].parameters.diferencias;
+            newCard.limitaciones    =block.cards[card].parameters.limitaciones;
+            newCard.marketing       =block.cards[card].parameters.marketing;
+            self.push('cards', newCard);
           }
           return this.cards;
         },
         openBot:function(e){
           var btnCard = Polymer.dom(e).localTarget;
-          var card = btnCard.data; this.currentCard = card;
-          var self=this;
-          this.$.txtMessage.value="";
-          this.$.btnSendMessage.data=card.id;
-          this.$.titleBot.innerHTML=card.title;
-          this.$.bot.open();
-
-          this.set("apiRequestBody", { query : [ "Iniciar con " + this.userFirstName + " en " +card.id ], lang: "es", sessionId: this.userEmail});
-          this.$.api.generateRequest();
+          this.fire('showChatbot', btnCard);
         },
         openModal:function(e){
           var btnCard = Polymer.dom(e).localTarget;
@@ -202,17 +138,6 @@
             }
             self.$.txtFeedback.value=msg;
           });
-        },
-        sendMessage:function(){
-          var newMessage = { from: this.userFirstName, message: this.$.txtMessage.value, align: "human_label"};
-          this.push('mensajes', newMessage);
-          this.set("apiRequestBody", { query : [ this.$.txtMessage.value ], lang: "es", sessionId: this.userEmail});
-          this.$.api.generateRequest();
-          this.$.txtMessage.value = "";
-        },
-        closeBot:function(){
-          this.set('mensajes', []);
-          this.$.bot.close();
         },
         sendFeedback:function(){
           var db = firebase.database();
