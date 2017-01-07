@@ -19,17 +19,18 @@ A Polymer element for star ratings.
 @status alpha
 @url cmartinezv.github.io/webcomponents
 -->
+<dom-module id="star-rating">
 <style>
   :host {
     display: block;
   }
 
-  .xtar-rating-wrapper {
+  .star-rating-wrapper {
     unicode-bidi: bidi-override;
     direction: rtl;
     text-align: center;
   }
-  .xtar-rating-wrapper > span {
+  .star-rating-wrapper > span {
     display: inline-block;
     position: relative;
     width: 1em;
@@ -37,34 +38,34 @@ A Polymer element for star ratings.
     cursor: pointer;
     opacity: 0.4;
   }
-  .xtar-rating-wrapper > span.active,
-  .xtar-rating-wrapper > span.active ~ span {
+  .star-rating-wrapper > span.active,
+  .star-rating-wrapper > span.active ~ span {
      opacity: 1;
   }
-  .xtar-rating-wrapper:hover > span.active,
-  .xtar-rating-wrapper:hover > span.active ~ span {
+  .star-rating-wrapper:hover > span.active,
+  .star-rating-wrapper:hover > span.active ~ span {
      opacity: 0.4;
   }
-  .xtar-rating-wrapper > span:hover,
-  .xtar-rating-wrapper > span:hover ~ span,
-  .xtar-rating-wrapper > span.active:hover ~ span {
+  .star-rating-wrapper > span:hover,
+  .star-rating-wrapper > span:hover ~ span,
+  .star-rating-wrapper > span.active:hover ~ span {
     opacity: 0.8 !important;
   }
-  .xtar-rating-wrapper > span:hover {
+  .star-rating-wrapper > span:hover {
     opacity: 0.9 !important;
   }
-  .xtar-rating-wrapper > span.totals {
+  .star-rating-wrapper > span.totals {
     opacity: 1 !important;
     margin-left: 50px;
   }
-  .xtar-rating-wrapper > span.totals:hover {
+  .star-rating-wrapper > span.totals:hover {
     opacity: 1 !important;
   }
 </style>
-<dom-module id="star-rating">
+
 <template>
 
-  <div class="xtar-rating-wrapper">
+  <div class="star-rating-wrapper">
     <template is="dom-if" if="{{withTotal(showtotals)}}">
       <span class="totals"><span>{{rate}}</span>/<span>{{stars}}</span></span>
     </template>

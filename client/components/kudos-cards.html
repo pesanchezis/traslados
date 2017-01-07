@@ -33,6 +33,7 @@
               </div>
               <div class="card-actions">
                 <!-- Lista de Kudos X Tarjeta -->
+                <div style="display:block;">
                 <template id="tmtKudo" is="dom-repeat" items="{{kudos}}" as="kudo">
                   {{getKudosUser(card.id,kudo.id)}}
                   <paper-button class="kudo" toggles  id="id_{{card.id}}_{{kudo.id}}" on-click="valorar">
@@ -40,11 +41,14 @@
                   </paper-button>
                   <paper-tooltip for="id_{{card.id}}_{{kudo.id}}" position="top" style="max-width:100px;">{{kudo.title}}<br>{{kudo.description}}</paper-tooltip>
                 </template>
+                </div>
+                <br>
+                <div style="display:block;">
+                  <star-rating stars="5" rate="0" id=="star_{{card.id}}"></star-rating>
+                </div>
               </div>
               <!-- prueba de concepto-->
-              <div>
-                <star-rating stars="5" rate="0" id=="star_{{card.id}}"></star-rating>
-              </div>
+
             </paper-card>
           </template></paper-card>
         </template>
@@ -75,6 +79,17 @@
         },
         ready: function(){
         },
+        getKudos:function(){   
+            var self = this;    
+            firebase.database().ref('eventos/' + this.activeEvent + '/kudos').once('value').then(function(snapshot) {   
+              self.kudos = [];    
+              snapshot.forEach(function(child) {    
+                var kudo = child.val();   
+                kudo.id=child.key;    
+                self.push('kudos', kudo);   
+              });   
+            });   
+          },
         getBlocks:function(){
           var ref = firebase.database().ref("eventos/" + this.activeEvent + "/blocks");
           var self = this;
