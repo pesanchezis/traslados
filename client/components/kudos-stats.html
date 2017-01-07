@@ -17,7 +17,7 @@
       <h3>Ranking general</h3>
       <template is="dom-repeat" items="{{cards}}" as="card">
         <div style="text-align:left;margin-left:10px;">
-            <div id="star_{{card.id}}" style="vertical-align:middle;display:inline-block; font-weight:bold; width:12px;"></div>
+            <div id="estrella_{{card.id}}" style="vertical-align:middle;display:inline-block; font-weight:bold; width:12px;"></div>
             <div style="display:inline-block;width: 30px;"><iron-icon icon="icons:star" style="color:#dada0c;width:20px;height:17px;"></iron-icon></div>
             <div style="vertical-align:middle;display:inline-block;">{{card.title}}</div>
       </div>
@@ -160,6 +160,7 @@
       self.$$('#fb_' +idCard).innerHTML=listFeedback+'</ul>';
     },
     getRanking:function(){
+      console.log("dddd");
       var self=this;
       firebase.database().ref('eventos/' + this.activeEvent +'/users').once('value',function(snapshot) {
         var users = snapshot.val();
@@ -172,7 +173,7 @@
           _user.name=users[user].profile.name;
           _user.picture=users[user].profile.picture;
           var numKudos=0;
-          var numFeedback=0;var totRating=0;
+          var numFeedback=0;
           for (var card in users[user]) {
             var vote = users[user][card];
             for (var prop in vote) {
@@ -194,16 +195,20 @@
                 }
               }else if(prop == 'rating'){
                 var rating = users[user][card]['rating'];
-                var strRating="";
+                if(users[user][card]['rating'] == null){
+                  rating = 0;
+                }
+                var strRating="";var totRating=0;
 
-                if(self.$$('#star_' +card).innerHTML==null || self.$$('#star_' +card).innerHTML==""){
+                if(self.$$('#estrella_' +card)==null){
                   totRating=0;
                 }else{
-                  strRating= self.$$('#star_' +card).innerHTML;
+                  strRating= self.$$('#estrella_' +card).innerHTML;
                   totRating=parseInt(strRating);
+                  totRating=totRating+rating;
+                  self.$$('#estrella_' +card).innerHTML=totRating;
                 }
-                totRating=totRating+rating;
-                self.$$('#star_' +card).innerHTML=totRating;
+
               }
             }
           }

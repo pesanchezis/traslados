@@ -29,6 +29,7 @@ A Polymer element for star ratings.
     unicode-bidi: bidi-override;
     direction: rtl;
     text-align: center;
+    
   }
   .star-rating-wrapper > span {
     display: inline-block;
@@ -37,10 +38,12 @@ A Polymer element for star ratings.
     font-size: 1.5em;
     cursor: pointer;
     opacity: 0.4;
+    color: darkgray; 
   }
   .star-rating-wrapper > span.active,
   .star-rating-wrapper > span.active ~ span {
      opacity: 1;
+     color: #FFEA00;
   }
   .star-rating-wrapper:hover > span.active,
   .star-rating-wrapper:hover > span.active ~ span {
