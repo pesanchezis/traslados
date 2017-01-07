@@ -37,34 +37,6 @@
           </paper-card>
           </template>
         </template>
-        <paper-dialog  id="bot">
-          <div>
-            <div style="display:inline-block;width:90% !important;align:right;">
-              <b><span id="titleBot"></span></b>
-            </div>
-            <div style="display:inline-block;width:8% !important;align:left;">
-              <paper-icon-button icon="icons:close" on-tap="closeBot"></paper-icon-button>
-            </div>
-          </div>
-          <div>
-            <div style="overflow-y:auto;height:200px !important;padding-bottom:80px;" id="chat">
-              <template is="dom-repeat" items="{{mensajes}}">
-                  <div class$="[[item.align]]">[[item.from]] dice: [[item.message]]</div>
-              </template>
-            </div>
-            <div style="width:100%;margin:0px;padding:0px;">
-              <div style="display:inline-block;width:80%;">
-                <paper-textarea id="txtMessage" label="[[userFirstName]], ingresa tu pregunta..."></paper-textarea>
-              </div>
-              <div style="display:inline-block;width:15%;">
-                <paper-icon-button icon="icons:send" id="btnSendMessage" on-tap="sendMessage" autofocus></paper-icon-button>
-              </div>
-            </div>
-          </div>
-        </paper-dialog>
-        <iron-ajax id="api" url="https://api.api.ai/v1/query" params='{"v":"20150910"}'
-          headers='{"Authorization": "Bearer 7324e6390faf48fca8c4eb7fb9cc2120","Content-Type": "application/json"}'
-          method='POST' body='{{apiRequestBody}}' on-response="apiResponseHandler" handle-as="json" verbose="true" debounce-duration="300"></iron-ajax>
         <paper-dialog id="feedback" >
           <h2 id="titleFeedback">Feedback para:</h2>
           <paper-textarea id="txtFeedback" label="Ingresa tu feedback..."></paper-textarea>
@@ -89,39 +61,8 @@
           cards           : {type:Array, notify:true},
           blocks          : {type:Array, notify:true},
           kudos           : {type:Array, notify:true},
-          mensajes        : {type:Array, value:function() { return []},observer:"mensajesChanged"},
-          apiRequestBody  : {type:Object},
-          currentCard     : {type:Object, value:function() { return {}}}
         },
         ready: function(){
-          // window.setInterval(function() { var elem = document.getElementById('chat'); elem.scrollTop = elem.scrollHeight; }, 2000);
-        },
-        mensajesChanged: function(newVal,oldVal){
-          this.$.chat.scrollTop = this.$.chat.scrollHeight;
-          console.log("mensajesChanged");
-        },
-        apiResponseHandler: function(data) {
-          var card = this.currentCard;
-          console.log("hs>", card);
-          console.log("hs:", data.detail.response);
-          var defaultSpeech = data.detail.response.result.fulfillment.speech;
-          var ambienteSpeech = defaultSpeech.replace("||ambiente||",card.ambiente);
-          var ambiente_fechaSpeech = ambienteSpeech.replace("||ambiente_fecha||",card.ambiente_fecha);
-          var canalSpeech = ambiente_fechaSpeech.replace("||canal||",card.canal);
-          var customerSpeech = canalSpeech.replace("||customer||",card.customer);
-          var detallesSpeech = customerSpeech.replace("||detalles||",card.detalles);
-          var diferenciasSpeech = detallesSpeech.replace("||diferencias||",card.diferencias);
-          var limitacionesSpeech = diferenciasSpeech.replace("||limitaciones||",card.limitaciones);
-          var marketingSpeech = limitacionesSpeech.replace("||marketing||",card.marketing);
-          var metricaSpeech = marketingSpeech.replace("||metrica||",card.metrica);
-          var objetivoSpeech = metricaSpeech.replace("||objetivo||",card.objetivo);
-          var participantesSpeech = objetivoSpeech.replace("||participantes||",card.participantes);
-          var tiempoSpeech = participantesSpeech.replace("||tiempo||",card.tiempo);
-          var newMessage = { from: card.leader, message: tiempoSpeech, align: "bot_label"};
-          this.push('mensajes', newMessage);
-          console.log("apiResponseHandler: " + this.$.chat.scrollTop + " - height: " + this.$.chat.scrollHeight);
-          this.$.chat.scrollTop = this.$.chat.scrollHeight;
-          console.log("2. apiResponseHandler: " + this.$.chat.scrollTop + " - height: " + this.$.chat.scrollHeight);
         },
         getKudos:function(){
           var self = this;
@@ -174,15 +115,7 @@
         },
         openBot:function(e){
           var btnCard = Polymer.dom(e).localTarget;
-          var card = btnCard.data; this.currentCard = card;
-          var self=this;
-          this.$.txtMessage.value="";
-          this.$.btnSendMessage.data=card.id;
-          this.$.titleBot.innerHTML=card.title;
-          this.$.bot.open();
-
-          this.set("apiRequestBody", { query : [ "Iniciar con " + this.userFirstName + " en " +card.id ], lang: "es", sessionId: this.userEmail});
-          this.$.api.generateRequest();
+          this.fire('showChatbot', btnCard);
         },
         openModal:function(e){
           var btnCard = Polymer.dom(e).localTarget;
@@ -200,17 +133,6 @@
             }
             self.$.txtFeedback.value=msg;
           });
-        },
-        sendMessage:function(){
-          var newMessage = { from: this.userFirstName, message: this.$.txtMessage.value, align: "human_label"};
-          this.push('mensajes', newMessage);
-          this.set("apiRequestBody", { query : [ this.$.txtMessage.value ], lang: "es", sessionId: this.userEmail});
-          this.$.api.generateRequest();
-          this.$.txtMessage.value = "";
-        },
-        closeBot:function(){
-          this.set('mensajes', []);
-          this.$.bot.close();
         },
         sendFeedback:function(){
           var db = firebase.database();

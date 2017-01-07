@@ -39,6 +39,7 @@
 <link rel="import" href="kudos-cards.html">
 <link rel="import" href="kudos-stats.html">
 <link rel="import" href="kudos-about.html">
+<link rel="import" href="kudos-chatbot.html">
 <dom-module id="kudos-app">
     <template>
         <style is="custom-style">
@@ -46,6 +47,7 @@
         --app-primary-color: #094FA4; /*#4285f4;*/
         --app-secondary-color: black;
             display: block;
+            height: 100%;
         }
         app-header {
             color: #fff;
@@ -61,6 +63,9 @@
           background-color: #4285f4;
           color: white;
         }
+        .chatbot {
+          background: #ffffff;
+        }
         </style>
         <div hidden$="{{logged}}" width="100%" style="text-align:center; margin-top:20%;">
             Bienvenid@ a Kudos, para poder dejar tu feedback debes identificarte:<br>
@@ -73,6 +78,7 @@
             <app-header-layout>
                 <app-header fixed>
                     <app-toolbar>
+                        <paper-icon-button icon="arrow-back" id="mBack" on-tap="closeChatbot" style="display:none"></paper-icon-button>
                         <div><span class="logo">KUDOS</span> | [[eventName]]</div>
                         <iron-icon icon="icons:events"></iron-icon>
                         <div main-title></div>
@@ -90,6 +96,7 @@
                 <kudos-cards id="cards" style="display:none"></kudos-cards>
                 <kudos-stats id="stats" style="display:none"></kudos-stats>
                 <kudos-about id="about" style="display:none"></kudos-about>
+                <kudos-chatbot id="chatbot" class="chatbot" style="display:none"></kudos-chatbot>
             </app-header-layout>
         </div>
     </template>
@@ -111,6 +118,7 @@
             },
             ready:function() {
                 //this.eventName = 'Macrocomité 4T';
+                this.addEventListener('showChatbot', this.showChatbot);
                 firebase.initializeApp({
                     apiKey: "AIzaSyBiBdm3MheV4sN7lfk0WLoVDtXXxHxbbvk",
                     authDomain: "devnovators.firebaseapp.com",
@@ -126,6 +134,8 @@
                         parent.$.cards.userEmail = account.email.toString().replace(/[@.]/g,'_');
                         parent.$.cards.userPicture = account.photoURL || '../images/avatar_login.png';
                         parent.$.cards.userName = account.displayName;
+                        parent.$.chatbot.userFirstName = account.displayName.split(' ')[0];
+                        parent.$.chatbot.userEmail = account.email.toString().replace(/[@.]/g,'_');
                         console.log("account.displayName => " + account.displayName);
                         parent.set('userName', account.displayName);
                         parent.set('userPicture', account.photoURL);
@@ -171,6 +181,7 @@
                     this.$.cards.style.display = "block";
                     this.$.stats.style.display = "none";
                     this.$.about.style.display = "none";
+                    this.$.chatbot.style.display = "none";
                 }
             },
             showStats:function() {
@@ -178,6 +189,7 @@
                     this.$.cards.style.display = "none";
                     this.$.stats.style.display = "block";
                     this.$.about.style.display = "none";
+                    this.$.chatbot.style.display = "none";
                     this.$.stats.getRanking();
                     this.$.stats.getCards();
                 }
@@ -187,7 +199,28 @@
                     this.$.cards.style.display = "none";
                     this.$.stats.style.display = "none";
                     this.$.about.style.display = "block";
+                    this.$.chatbot.style.display = "none";
                 }
+            },
+            showChatbot:function(event) {
+                if(this.logged){
+                    this.$.mBack.style.display = "block";
+                    this.$.cards.style.display = "none";
+                    this.$.stats.style.display = "none";
+                    this.$.about.style.display = "none";
+                    this.$.chatbot.style.display = "block";
+                }
+                this.$.chatbot.initBot(event.detail);
+            },
+            closeChatbot:function() {
+                if(this.logged){
+                    this.$.mBack.style.display = "none";
+                    this.$.cards.style.display = "block";
+                    this.$.stats.style.display = "none";
+                    this.$.about.style.display = "none";
+                    this.$.chatbot.style.display = "none";
+                }
+                this.$.chatbot.closeBot();
             },
             signOut:function() {
                 firebase.auth().signOut();
