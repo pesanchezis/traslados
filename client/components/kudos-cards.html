@@ -43,7 +43,7 @@
               </div>
               <!-- prueba de concepto-->
               <div>
-                <star-rating stars="5" rate="0" id=="star_{{card.id}}"></star-rating>
+                <star-rating stars="5" id=="star_{{card.id}}" on-click="rankear" ></star-rating>
               </div>
             </paper-card>
           </template></paper-card>
@@ -192,9 +192,40 @@
           var ref = firebase.database().ref("eventos/" + this.activeEvent + "/users/" + this.userEmail + "/" + idCard + "/rating/");
           ref.once('value').then(function(snapshot) {
             if(snapshot.val()!=null){
-              self.$$('#rating_' +idCard).rate=snapshot.val();
+              self.$$('#star_' +idCard).rate=snapshot.val();
+            } else {
+              self.$$('#star_' +idCard).rate=0;
             }
           });
+        },
+        rankear:function(e) {
+          //self=this;
+          var data = e.model['__data__'];
+          var idCard = data.card.id;
+          console.log(this.$$('#star_' + idCard.toString() ));
+          //console.log(e);
+
+
+          //var idKudo = kudoSeleccionado.kudo.id;
+          //var idCard = kudoSeleccionado.card.id;
+          //var idBtnKudo=this.$$('#id_' +idCard +'_' +idKudo);
+          //var voto = 1;
+          //if (!idBtnKudo.active){
+          //  voto = -1;
+          //}
+          //var refControl = firebase.database().ref('eventos/' + this.activeEvent +'/users').child(this.userEmail);
+          //if(voto > 0) {
+          //  var updates = {};
+          //  updates["/" + idCard + "/kudos/" + idKudo] = true;
+          //  var userData = {
+          //    name: this.userName,
+          //    picture: this.userPicture
+          //  };
+          //  updates["/profile"] = userData;
+          //  refControl.update(updates);
+          //} else {
+          //  firebase.database().ref('eventos/' + this.activeEvent +'/users').child(this.userEmail).child(idCard).child('kudos').child(idKudo).remove();
+          //}
         }
       });
     </script>
