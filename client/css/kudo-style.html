@@ -160,6 +160,32 @@
     paper-button.kudo[active] {
       background-color: #82C82D;
     }
+
+    .kudos-button{
+      display: table-cell; width: 60%;
+      vertical-align: middle;
+    }
+
+    .valoracion-star{
+      display: table-cell; width: 40%;
+      vertical-align: middle;
+    }
+
+    @media (max-width: 550px) {
+      .kudos-button{
+        display: inherit; width: 100%;
+        text-align: center !important;
+      }
+
+      paper-button.kudo{
+        float: none;
+      }
+
+      .valoracion-star{
+        display: inherit; width: 100%;
+      }
+    }
+
   </style>
 </template>
 </dom-module>
