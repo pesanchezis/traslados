@@ -24,12 +24,12 @@ A Polymer element for star ratings.
     display: block;
   }
 
-  .star-rating-wrapper {
+  .xtar-rating-wrapper {
     unicode-bidi: bidi-override;
     direction: rtl;
     text-align: center;
   }
-  .star-rating-wrapper > span {
+  .xtar-rating-wrapper > span {
     display: inline-block;
     position: relative;
     width: 1em;
@@ -37,34 +37,34 @@ A Polymer element for star ratings.
     cursor: pointer;
     opacity: 0.4;
   }
-  .star-rating-wrapper > span.active,
-  .star-rating-wrapper > span.active ~ span {
+  .xtar-rating-wrapper > span.active,
+  .xtar-rating-wrapper > span.active ~ span {
      opacity: 1;
   }
-  .star-rating-wrapper:hover > span.active,
-  .star-rating-wrapper:hover > span.active ~ span {
+  .xtar-rating-wrapper:hover > span.active,
+  .xtar-rating-wrapper:hover > span.active ~ span {
      opacity: 0.4;
   }
-  .star-rating-wrapper > span:hover,
-  .star-rating-wrapper > span:hover ~ span,
-  .star-rating-wrapper > span.active:hover ~ span {
+  .xtar-rating-wrapper > span:hover,
+  .xtar-rating-wrapper > span:hover ~ span,
+  .xtar-rating-wrapper > span.active:hover ~ span {
     opacity: 0.8 !important;
   }
-  .star-rating-wrapper > span:hover {
+  .xtar-rating-wrapper > span:hover {
     opacity: 0.9 !important;
   }
-  .star-rating-wrapper > span.totals {
+  .xtar-rating-wrapper > span.totals {
     opacity: 1 !important;
     margin-left: 50px;
   }
-  .star-rating-wrapper > span.totals:hover {
+  .xtar-rating-wrapper > span.totals:hover {
     opacity: 1 !important;
   }
 </style>
 <dom-module id="star-rating">
 <template>
 
-  <div class="star-rating-wrapper">
+  <div class="xtar-rating-wrapper">
     <template is="dom-if" if="{{withTotal(showtotals)}}">
       <span class="totals"><span>{{rate}}</span>/<span>{{stars}}</span></span>
     </template>

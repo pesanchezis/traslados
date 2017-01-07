@@ -1,3 +1,4 @@
+<link rel="import" href="../bower_components/star-rating/star-rating.html">
 <dom-module id="kudos-cards">
   <link rel="import" href="../css/kudo-style.html">
   <template>
@@ -40,8 +41,9 @@
                   <paper-tooltip for="id_{{card.id}}_{{kudo.id}}" position="top" style="max-width:100px;">{{kudo.title}}<br>{{kudo.description}}</paper-tooltip>
                 </template>
               </div>
+              <!-- prueba de concepto-->
               <div>
-                <star-rating stars="5" rate="3"></star-rating>
+                <star-rating stars="5" rate="0" id=="star_{{card.id}}"></star-rating>
               </div>
             </paper-card>
           </template></paper-card>
