@@ -15,7 +15,14 @@
   <iron-pages selected="{{selected}}">
     <div class="resultFeedback">
       <h3>Ranking general</h3>
-
+      <template is="dom-repeat" items="{{cards}}" as="card">
+        <div style="text-align:left;margin-left:10px;">
+          <div style="vertical-align:middle;display:inline-block; width:50px;font-weight:bold;">15
+            <iron-icon icon="icons:star" style="vertical-align:middle;color:#dada0c;width:20px;height:17px;"></iron-icon>
+          </div>
+          <div style="vertical-align:middle;display:inline-block;">{{card.title}}</div>
+        </div>
+      </template>
     </div>
 
     <div class="resultFeedback">
