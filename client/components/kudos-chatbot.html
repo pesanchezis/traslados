@@ -7,12 +7,13 @@
             <b><span id="titleBot"></span></b>
           </div>
         </div>
-        <div>
-          <div style="overflow-y:auto;height:200px !important;padding-bottom:80px;" id="chat">
+        <div style="height: 85vh;">
+          <div style="overflow-y:auto;height:70vh;" id="chat">
             <template is="dom-repeat" items="{{mensajes}}">
                 <div class$="[[item.align]]">[[item.from]] dice: [[item.message]]</div>
             </template>
           </div>
+          <div id="wait" style="font-size:18px;display: none;">...</div>
           <div style="width:100%;margin:0px;padding:0px;">
             <div style="display:inline-block;width:80%;">
               <paper-textarea id="txtMessage" label="[[userFirstName]], ingresa tu pregunta..."></paper-textarea>
@@ -39,7 +40,6 @@
         ready: function(){
         },
         mensajesChanged: function(newVal,oldVal){
-          this.$.chat.scrollTop = this.$.chat.scrollHeight;
         },
         apiResponseHandler: function(data) {
           var card = this.currentCard;
@@ -57,8 +57,17 @@
           var participantesSpeech = objetivoSpeech.replace("||participantes||",card.participantes);
           var tiempoSpeech = participantesSpeech.replace("||tiempo||",card.tiempo);
           var newMessage = { from: card.leader, message: tiempoSpeech, align: "bot_label"};
-          this.push('mensajes', newMessage);
-          this.$.chat.scrollTop = this.$.chat.scrollHeight;
+          var thisChat=this;
+          setTimeout(function(){ 
+            thisChat.$.chat.scrollTop=thisChat.$.chat.scrollHeight;
+           }, 100);
+          setTimeout(function(){ 
+            thisChat.$.wait.style.display = "none";
+            thisChat.push('mensajes', newMessage);
+           }, 800);
+          setTimeout(function(){ 
+            thisChat.$.chat.scrollTop=thisChat.$.chat.scrollHeight;
+           }, 1000);
         },
         initBot:function(btn){
           var btnCard = btn;
@@ -78,11 +87,14 @@
           this.$.api.generateRequest();
         },
         sendMessage:function(){
-          var newMessage = { from: this.userFirstName, message: this.$.txtMessage.value, align: "human_label"};
-          this.push('mensajes', newMessage);
-          this.set("apiRequestBody", { query : [ this.$.txtMessage.value ], lang: "es", sessionId: this.userEmail});
-          this.$.api.generateRequest();
-          this.$.txtMessage.value = "";
+          if(this.$.txtMessage.value.length!=0){
+            this.$.wait.style.display = "block";
+            var newMessage = { from: this.userFirstName, message: this.$.txtMessage.value, align: "human_label"};
+            this.push('mensajes', newMessage);
+            this.set("apiRequestBody", { query : [ this.$.txtMessage.value ], lang: "es", sessionId: this.userEmail});
+            this.$.api.generateRequest();
+            this.$.txtMessage.value = "";
+          }
         },
         closeBot:function(){
           this.set('mensajes', []);
