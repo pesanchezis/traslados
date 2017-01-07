@@ -13,6 +13,7 @@
                 <div class$="[[item.align]]">[[item.from]] dice: [[item.message]]</div>
             </template>
           </div>
+          <div id="wait" style="font-size:18px;display: none;">...</div>
           <div style="width:100%;margin:0px;padding:0px;">
             <div style="display:inline-block;width:80%;">
               <paper-textarea id="txtMessage" label="[[userFirstName]], ingresa tu pregunta..."></paper-textarea>
@@ -56,15 +57,17 @@
           var participantesSpeech = objetivoSpeech.replace("||participantes||",card.participantes);
           var tiempoSpeech = participantesSpeech.replace("||tiempo||",card.tiempo);
           var newMessage = { from: card.leader, message: tiempoSpeech, align: "bot_label"};
-          this.push('mensajes', newMessage);
-          var divChat=this.$.chat;
+          var thisChat=this;
           setTimeout(function(){ 
-            divChat.scrollTop=divChat.scrollHeight;
+            thisChat.$.chat.scrollTop=thisChat.$.chat.scrollHeight;
            }, 100);
-          //console.info(this.$.chat.scrollTop);
-          //console.info(this.$.chat.scrollHeight);
-          //this.$.chat.scrollIntoView(false);
-          //this.$.chat.scrollBy(0, 1000);
+          setTimeout(function(){ 
+            thisChat.$.wait.style.display = "none";
+            thisChat.push('mensajes', newMessage);
+           }, 800);
+          setTimeout(function(){ 
+            thisChat.$.chat.scrollTop=thisChat.$.chat.scrollHeight;
+           }, 1000);
         },
         initBot:function(btn){
           var btnCard = btn;
@@ -84,11 +87,14 @@
           this.$.api.generateRequest();
         },
         sendMessage:function(){
-          var newMessage = { from: this.userFirstName, message: this.$.txtMessage.value, align: "human_label"};
-          this.push('mensajes', newMessage);
-          this.set("apiRequestBody", { query : [ this.$.txtMessage.value ], lang: "es", sessionId: this.userEmail});
-          this.$.api.generateRequest();
-          this.$.txtMessage.value = "";
+          if(this.$.txtMessage.value.length!=0){
+            this.$.wait.style.display = "block";
+            var newMessage = { from: this.userFirstName, message: this.$.txtMessage.value, align: "human_label"};
+            this.push('mensajes', newMessage);
+            this.set("apiRequestBody", { query : [ this.$.txtMessage.value ], lang: "es", sessionId: this.userEmail});
+            this.$.api.generateRequest();
+            this.$.txtMessage.value = "";
+          }
         },
         closeBot:function(){
           this.set('mensajes', []);
