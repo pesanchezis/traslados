@@ -1,42 +1,48 @@
 <dom-module id="kudos-cards">
-<link rel="import" href="../css/kudo-style.html">
-    <template>
-        <style include="cards"></style>
-        <img id="imgProfile" class="avatar" src="{{userPicture}}">
-        ¡Bienvenido {{userName}}!
-        <template id="resultList" is="dom-repeat" items="{{blocks}}" as="block">
-          <template is="dom-repeat" items="{{_getCards(block)}}" as="card">
+  <link rel="import" href="../css/kudo-style.html">
+  <template>
+    <style include="cards"></style>
+    <!-- Bienvenida -->
+    <div style="display:table">
+      <img id="imgProfile" class="avatar" src="{{userPicture}}">
+      <div style="display:table-cell;vertical-align:middle"> ¡Bienvenid@ {{userFirstName}}!</div>
+    </div>
+    <!-- Lista de Bloques -->
+    <template id="arrBlocks" is="dom-repeat" items="{{blocks}}" as="block">
+      <paper-card style="width:100%">
+        <div class="rate-header titleProject" style="background:{{block.color}}">Bloque {{block.title}}</div>
+        <!-- Lista de Tarjetas x Bloque -->
+        <template id="arrCards" is="dom-repeat" items="{{_getCards(block)}}" as="card">
           <paper-card class="rate">
             <div class="rate-content">
               <div>
-                <div class="rate-header titleProject" style="background:{{card.color}}">{{block.title}}</div>
-                  <div class="rate-name">
-                    <div class="div_middle">
-                      <b>{{card.title}}</b> <br>
-                      {{card.description}}
-                    </div>
-                    <div class="div_feedback">
-                      <paper-button class="rate-icon bot" id="{{card.id}}" data='{{card}}' on-click="openBot">
-                        Pregúntanos <iron-icon icon="communication:live-help" data='{{card}}'></iron-icon>
-                      </paper-button>
-                      <paper-button class="rate-icon feeback" id="{{card.id}}" data='{{card}}' on-click="openModal">
-                        Danos feedback <iron-icon icon="announcement" data='{{card}}'></iron-icon>
-                      </paper-button>
-                    </div>
-                  </div>
-              </div>
-                <div class="card-actions">
-                  <template id="tmtKudo" is="dom-repeat" items="{{kudos}}" as="kudo">
-                    {{getKudosUser(card.id,kudo.id)}}
-                    <paper-button class="kudo" toggles  id="id_{{card.id}}_{{kudo.id}}" on-click="valorar">
-                      <iron-icon icon="{{kudo.icon}}"></iron-icon> {{kudo.title}}
+                <div class="rate-header titleProject" style="background:{{card.color}}">{{card.title}}</div>
+                <div class="rate-name">
+                  <div class="div_middle">{{card.description}}</div>
+                  <div class="div_feedback">
+                    <paper-button class="rate-icon bot" id="{{card.id}}" data='{{card}}' on-click="openBot" style$="display:[[card.withChat]]">
+                      Pregúntanos algo<iron-icon icon="communication:live-help" data='{{card}}'></iron-icon>
                     </paper-button>
-                    <paper-tooltip for="id_{{card.id}}_{{kudo.id}}" position="top" style="max-width:100px;">{{kudo.title}}<br> {{kudo.description}}</paper-tooltip>
-                  </template>
+                    <paper-button class="rate-icon feeback" id="{{card.id}}" data='{{card}}' on-click="openModal">
+                      Danos feedback <iron-icon icon="announcement" data='{{card}}'></iron-icon>
+                    </paper-button>
+                  </div>
                 </div>
-          </paper-card>
-          </template>
+              </div>
+              <div class="card-actions">
+                <!-- Lista de Kudos X Tarjeta -->
+                <template id="tmtKudo" is="dom-repeat" items="{{kudos}}" as="kudo">
+                  {{getKudosUser(card.id,kudo.id)}}
+                  <paper-button class="kudo" toggles  id="id_{{card.id}}_{{kudo.id}}" on-click="valorar">
+                    <iron-icon icon="{{kudo.icon}}"></iron-icon> {{kudo.title}}
+                  </paper-button>
+                  <paper-tooltip for="id_{{card.id}}_{{kudo.id}}" position="top" style="max-width:100px;">{{kudo.title}}<br>{{kudo.description}}</paper-tooltip>
+                </template>
+              </div>
+            </paper-card>
+          </template></paper-card>
         </template>
+        <!-- Popups -->
         <paper-dialog  id="bot">
           <div>
             <div style="display:inline-block;width:90% !important;align:right;">
@@ -102,7 +108,7 @@
         },
         apiResponseHandler: function(data) {
           var card = this.currentCard;
-          console.log("hs>", card);
+          //console.log("hs>", card);
           console.log("hs:", data.detail.response);
           var defaultSpeech = data.detail.response.result.fulfillment.speech;
           var ambienteSpeech = defaultSpeech.replace("||ambiente||",card.ambiente);
@@ -117,11 +123,12 @@
           var objetivoSpeech = metricaSpeech.replace("||objetivo||",card.objetivo);
           var participantesSpeech = objetivoSpeech.replace("||participantes||",card.participantes);
           var tiempoSpeech = participantesSpeech.replace("||tiempo||",card.tiempo);
-          var newMessage = { from: card.leader, message: tiempoSpeech, align: "bot_label"};
+          var proyectoSpeech = tiempoSpeech.replace("||proyecto||",card.title);
+          var newMessage = { from: card.leader, message: proyectoSpeech, align: "bot_label"};
           this.push('mensajes', newMessage);
-          console.log("apiResponseHandler: " + this.$.chat.scrollTop + " - height: " + this.$.chat.scrollHeight);
+          //console.log("apiResponseHandler: " + this.$.chat.scrollTop + " - height: " + this.$.chat.scrollHeight);
           this.$.chat.scrollTop = this.$.chat.scrollHeight;
-          console.log("2. apiResponseHandler: " + this.$.chat.scrollTop + " - height: " + this.$.chat.scrollHeight);
+          //console.log("2. apiResponseHandler: " + this.$.chat.scrollTop + " - height: " + this.$.chat.scrollHeight);
         },
         getKudos:function(){
           var self = this;
@@ -146,29 +153,25 @@
           });
         },
         _getCards:function(block){
-          this.cards=[];
-          self=this;
+          this.cards = [];
+          self = this;
           for (var card in block.cards) {
-            var _card={};
-            _card.titleBlock=block.title;
-            _card.id=card;
-            _card.title=block.cards[card].title;
-            _card.leader=block.cards[card].leader;
-            _card.description=block.cards[card].description;
-            _card.color=block.color;
-            _card.ambiente=block.cards[card].parameters.ambiente;
-            _card.ambiente_fecha=block.cards[card].parameters.ambiente_fecha;
-            _card.canal=block.cards[card].parameters.canal;
-            _card.customer=block.cards[card].parameters.customer;
-            _card.detalles=block.cards[card].parameters.detalles;
-            _card.diferencias=block.cards[card].parameters.diferencias;
-            _card.limitaciones=block.cards[card].parameters.limitaciones;
-            _card.marketing=block.cards[card].parameters.marketing;
-            _card.metrica=block.cards[card].parameters.metrica;
-            _card.objetivo=block.cards[card].parameters.objetivo;
-            _card.participantes=block.cards[card].parameters.participantes;
-            _card.tiempo=block.cards[card].parameters.tiempo;
-            self.push('cards', _card);
+            var newCard = { id:card, title:block.cards[card].title, description:block.cards[card].description,
+              leader:block.cards[card].leader, color:block.cards[card].color, withChat:block.cards[card].withChat };
+            //parameters
+            newCard.objetivo        =block.cards[card].parameters.objetivo;
+            newCard.detalles        =block.cards[card].parameters.detalles;
+            newCard.metrica         =block.cards[card].parameters.metrica;
+            newCard.customer        =block.cards[card].parameters.customer;
+            newCard.canal           =block.cards[card].parameters.canal;
+            newCard.ambiente        =block.cards[card].parameters.ambiente;
+            newCard.ambiente_fecha  =block.cards[card].parameters.ambiente_fecha;
+            newCard.tiempo          =block.cards[card].parameters.tiempo;
+            newCard.participantes   =block.cards[card].parameters.participantes;
+            newCard.diferencias     =block.cards[card].parameters.diferencias;
+            newCard.limitaciones    =block.cards[card].parameters.limitaciones;
+            newCard.marketing       =block.cards[card].parameters.marketing;
+            self.push('cards', newCard);
           }
           return this.cards;
         },
@@ -180,8 +183,18 @@
           this.$.btnSendMessage.data=card.id;
           this.$.titleBot.innerHTML=card.title;
           this.$.bot.open();
-
-          this.set("apiRequestBody", { query : [ "Iniciar con " + this.userFirstName + " en " +card.id ], lang: "es", sessionId: this.userEmail});
+          var query = "Iniciar con " + this.userFirstName + " en " +card.id;
+          //console.log("hs>", query);
+          //query = utf8_encode(query);
+          //console.log("hs>", query);
+          query = query.replace("á", "a"); query = query.replace("Á", "A");
+          query = query.replace("é", "e"); query = query.replace("É", "E");
+          query = query.replace("í", "i"); query = query.replace("Í", "I");
+          query = query.replace("ó", "o"); query = query.replace("Ó", "O");
+          query = query.replace("ú", "u"); query = query.replace("Ú", "U");
+          query = query.replace("ñ", "n"); query = query.replace("Ñ", "N");
+          this.set("apiRequestBody", { query : [ query ], lang: "es", sessionId: this.userEmail});
+          console.log("hs>", this.apiRequestBody);
           this.$.api.generateRequest();
         },
         openModal:function(e){
@@ -204,7 +217,14 @@
         sendMessage:function(){
           var newMessage = { from: this.userFirstName, message: this.$.txtMessage.value, align: "human_label"};
           this.push('mensajes', newMessage);
-          this.set("apiRequestBody", { query : [ this.$.txtMessage.value ], lang: "es", sessionId: this.userEmail});
+          var query = this.$.txtMessage.value;
+          query = query.replace("á", "a"); query = query.replace("Á", "A");
+          query = query.replace("é", "e"); query = query.replace("É", "E");
+          query = query.replace("í", "i"); query = query.replace("Í", "I");
+          query = query.replace("ó", "o"); query = query.replace("Ó", "O");
+          query = query.replace("ú", "u"); query = query.replace("Ú", "U");
+          query = query.replace("ñ", "n"); query = query.replace("Ñ", "N");
+          this.set("apiRequestBody", { query : [ query ], lang: "es", sessionId: this.userEmail});
           this.$.api.generateRequest();
           this.$.txtMessage.value = "";
         },
