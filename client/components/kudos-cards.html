@@ -1,3 +1,4 @@
+<link rel="import" href="../bower_components/star-rating/star-rating.html">
 <dom-module id="kudos-cards">
   <link rel="import" href="../css/kudo-style.html">
   <template>
@@ -28,6 +29,7 @@
                     </paper-button>
                   </div>
                 </div>
+                
               </div>
               <div class="card-actions">
                 <!-- Lista de Kudos X Tarjeta -->
@@ -38,6 +40,10 @@
                   </paper-button>
                   <paper-tooltip for="id_{{card.id}}_{{kudo.id}}" position="top" style="max-width:100px;">{{kudo.title}}<br>{{kudo.description}}</paper-tooltip>
                 </template>
+              </div>
+              <!-- prueba de concepto-->
+              <div>
+                <star-rating stars="5" rate="0" id=="star_{{card.id}}"></star-rating>
               </div>
             </paper-card>
           </template></paper-card>
@@ -68,17 +74,6 @@
           kudos           : {type:Array, notify:true},
         },
         ready: function(){
-        },
-        getKudos:function(){
-          var self = this;
-          firebase.database().ref('eventos/' + this.activeEvent + '/kudos').once('value').then(function(snapshot) {
-            self.kudos = [];
-            snapshot.forEach(function(child) {
-              var kudo = child.val();
-              kudo.id=child.key;
-              self.push('kudos', kudo);
-            });
-          });
         },
         getBlocks:function(){
           var ref = firebase.database().ref("eventos/" + this.activeEvent + "/blocks");
@@ -189,6 +184,15 @@
           ref.once('value').then(function(snapshot) {
             if(snapshot.val()!=null){
                 self.$$('#id_' +idCard +'_' +idKudo).active=snapshot.val();
+            }
+          });
+        },
+        getRatingCardUser:function(idCard){
+          self=this;
+          var ref = firebase.database().ref("eventos/" + this.activeEvent + "/users/" + this.userEmail + "/" + idCard + "/rating/");
+          ref.once('value').then(function(snapshot) {
+            if(snapshot.val()!=null){
+              self.$$('#rating_' +idCard).rate=snapshot.val();
             }
           });
         }
