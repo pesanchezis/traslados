@@ -41,12 +41,11 @@
                   <paper-tooltip for="id_{{card.id}}_{{kudo.id}}" position="top" style="max-width:100px;">{{kudo.title}}<br>{{kudo.description}}</paper-tooltip>
                 </template>
               </div>
-               <div>
-                  <star-rating stars="5" rate="0" id="star_{{card.id}}"></star-rating>
-                  {{getRatingCardUser(card.id)}}
-              </div>
               <!-- prueba de concepto-->
-
+              <div>
+                <star-rating stars="5" id="star_{{card.id}}" on-click="rankear" ></star-rating>
+                {{getRatingCardUser(card.id)}}
+              </div>
             </paper-card>
           </template>
           </paper-card>
@@ -211,6 +210,13 @@
             }
             self.$$('#star_' +idCard).rate=numStars;
           });
+        },
+        rankear:function(e) {
+          var data = e.model['__data__'];
+          var idCard = data.card.id;
+          var ratingCard = this.$$('#star_' + idCard).rate;
+          var ref = firebase.database().ref("eventos/" + this.activeEvent + "/users/" + this.userEmail + "/" + idCard );
+          ref.update({rating: ratingCard});
         }
       });
     </script>
