@@ -33,7 +33,6 @@
               </div>
               <div class="card-actions">
                 <!-- Lista de Kudos X Tarjeta -->
-                <div style="display:block;">
                 <template id="tmtKudo" is="dom-repeat" items="{{kudos}}" as="kudo">
                   {{getKudosUser(card.id,kudo.id)}}
                   <paper-button class="kudo" toggles  id="id_{{card.id}}_{{kudo.id}}" on-click="valorar">
@@ -41,16 +40,16 @@
                   </paper-button>
                   <paper-tooltip for="id_{{card.id}}_{{kudo.id}}" position="top" style="max-width:100px;">{{kudo.title}}<br>{{kudo.description}}</paper-tooltip>
                 </template>
-                </div>
-                <br>
-                <div style="display:block;">
-                  <star-rating stars="5" rate="0" id=="star_{{card.id}}"></star-rating>
-                </div>
+              </div>
+               <div>
+                  <star-rating stars="5" rate="0" id="star_{{card.id}}"></star-rating>
+                  {{getRatingCardUser(card.id)}}
               </div>
               <!-- prueba de concepto-->
 
             </paper-card>
-          </template></paper-card>
+          </template>
+          </paper-card>
         </template>
         <paper-dialog id="feedback" >
           <h2 id="titleFeedback">Feedback para:</h2>
@@ -148,7 +147,6 @@
         sendFeedback:function(){
           var db = firebase.database();
           var idCard=this.$.btnFeedback.data;
-          console.log(idCard);
           var msg=this.$.txtFeedback.value;
           if(msg.trim().length==0){this.$.feedback.close();return;}
           var ref = db.ref("eventos/" + this.activeEvent + "/users/" + this.userEmail);
@@ -204,11 +202,14 @@
         },
         getRatingCardUser:function(idCard){
           self=this;
-          var ref = firebase.database().ref("eventos/" + this.activeEvent + "/users/" + this.userEmail + "/" + idCard + "/rating/");
+          var ref = firebase.database().ref("eventos/" + this.activeEvent + "/users/" + this.userEmail + "/" + idCard + "/rating");
           ref.once('value').then(function(snapshot) {
+            var numStars=0;
             if(snapshot.val()!=null){
-              self.$$('#rating_' +idCard).rate=snapshot.val();
+              numStars=snapshot.val();
+              self.stars=numStars;
             }
+            self.$$('#star_' +idCard).rate=numStars;
           });
         }
       });
