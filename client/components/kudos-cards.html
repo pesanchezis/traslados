@@ -225,7 +225,16 @@
           var idCard = data.card.id;
           var ratingCard = this.$$('#star_' + idCard).rate;
           var ref = firebase.database().ref("eventos/" + this.activeEvent + "/users/" + this.userEmail + "/" + idCard );
-          ref.update({rating: ratingCard});
+          //ref.update({rating: ratingCard});
+
+          var updates = {};
+          updates["/rating"] = ratingCard;
+          var userData = {
+            name: this.userName,
+            picture: this.userPicture
+          };
+          updates["/profile"] = userData;
+          ref.update(updates);
         }
       });
     </script>
