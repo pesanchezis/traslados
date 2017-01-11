@@ -136,12 +136,12 @@
                 }
               } else if (prop == 'kudos') {
                 var kudos = users[user][card]['kudos'];
-                if (kudos.esinnovador == true) { esinnovador++; }
-                if (kudos.granesfuerzo == true) { granesfuerzo++; }
-                if (kudos.loentiendo == true) { loentiendo++; }
-                if (kudos.loqesperaba == true) { loqesperaba++; }
-                if (kudos.megusta == true) { megusta++; }
-                if (kudos.mesirve == true) { mesirve++; }
+                if (kudos.innovador == true) { esinnovador++; }
+                if (kudos.calidad == true) { granesfuerzo++; }
+                if (kudos.rentable == true) { loentiendo++; }
+                //if (kudos.loqesperaba == true) { loqesperaba++; }
+                //if (kudos.megusta == true) { megusta++; }
+                //if (kudos.mesirve == true) { mesirve++; }
               }
             }
             if (feedback.toString().trim().length>0 != '') {
@@ -152,16 +152,16 @@
       }
       var _kudos='';
       _kudos = '<div><div class="userSection">Innovador: </div><div class="userSection">'+ esinnovador + '</div></div>' ;
-      _kudos = _kudos + '<div><div class="userSection">Gran esfuerzo: </div><div class="userSection">'+ granesfuerzo + '</div></div>' ;
-      _kudos = _kudos + '<div><div class="userSection">Lo entiendo: </div><div class="userSection">'+ loentiendo + '</div></div>' ;
-      _kudos = _kudos + '<div><div class="userSection">Lo esperaba: </div><div class="userSection">'+ loqesperaba + '</div></div>' ;
-      _kudos = _kudos + '<div><div class="userSection">Me gusta: </div><div class="userSection">'+ megusta + '</div></div>' ;
-      _kudos = _kudos + '<div><div class="userSection">Me sirve: </div><div class="userSection">'+ mesirve + '</div></div>';
+      _kudos = _kudos + '<div><div class="userSection">Calidad: </div><div class="userSection">'+ granesfuerzo + '</div></div>' ;
+      _kudos = _kudos + '<div><div class="userSection">Rentable: </div><div class="userSection">'+ loentiendo + '</div></div>' ;
+      //_kudos = _kudos + '<div><div class="userSection">Lo que esperaba: </div><div class="userSection">'+ loqesperaba + '</div></div>' ;
+      //_kudos = _kudos + '<div><div class="userSection">Me gusta: </div><div class="userSection">'+ megusta + '</div></div>' ;
+      //_kudos = _kudos + '<div><div class="userSection">Me sirve: </div><div class="userSection">'+ mesirve + '</div></div>';
       self.$$('#kd_' +idCard).innerHTML=_kudos;
       self.$$('#fb_' +idCard).innerHTML=listFeedback+'</ul>';
     },
     getRanking:function(){
-      console.log("dddd");
+      //console.log("dddd");
       var self=this;
       firebase.database().ref('eventos/' + this.activeEvent +'/users').once('value',function(snapshot) {
         var users = snapshot.val();
@@ -195,7 +195,7 @@
                   }
                 }
               }else if(prop == 'rating'){
-                console.log("rating: " + users[user][card]['rating']);
+                //console.log("rating: " + users[user][card]['rating']);
                 var rating =0;
                 if(users[user][card]['rating'] == null){
                   rating = 0;
@@ -206,14 +206,14 @@
                 var totRating=0;
 
                 if(self.$$('#estrella_' +card).data==undefined){
-                  console.info("no existe estrella");
+                  //console.info("no existe estrella");
                   totRating=0;
 
                 }else{
                   strRating= self.$$('#estrella_' +card).data;
                   totRating=parseInt(strRating);
-                  console.info("existe estrella: " + strRating);
-                  console.info("existe estrella 2 : " + totRating);
+                  //console.info("existe estrella: " + strRating);
+                  //console.info("existe estrella 2 : " + totRating);
                 }
                   totRating=totRating+rating;
                   self.$$('#estrella_' +card).data=totRating;

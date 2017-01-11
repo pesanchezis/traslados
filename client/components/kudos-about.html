@@ -23,7 +23,7 @@
          </div>
         </template>
         <br>
-        <h1>Equipo desarrollador</h1>
+        <h1>¿Y los culpables? ¡Que pasen los... <b>Devnovators</b>!</h1>
         <div>
             <template id="team-member" is="dom-repeat" items="{{members}}" as="member">
               <template is="dom-if" if="{{verifyPic(member.pic)}}">
@@ -37,41 +37,41 @@
     </div>
 </template>
 <script>
- Polymer({ 
+ Polymer({
     is: 'kudos-about',
     properties: {
       titulo:{
          type: String,
          notify: true,
-         value: "Acerca de kudos"
+         value: "¿Qué es BBVA Kudos?"
       },
       titulo_des: {
           type: String,
           notify: true,
-          value: "Kudos, una forma de participar, reconocer y dar feedback a las inicitativas "+ 
-                  "y presentaciones del MacroComité 4T."
+          value: "Es un espacio digital que busca conectar a la comunidad BBVA con " +
+           "los proyectos estratégicos, a través de agradecimientos, feedback, valoración y preguntas"
       },
       sub_titulo:{
           type:String,
           notify: true,
-          value: "¿Cómo valorar una iniciativa o presentación?"
+          value: "¿Cómo dejar un agradecimiento (kudo) a un proyecto?"
       },
       contenido_sub_titulo:{
           type: String,
           notify: true,
-          value: "Para poder valorar una iniciativa es muy sencillo: "+
-                 "En cada presentación podrás encontrar "+
-                 "unos íconos con las categorías de valoración a otorgar."
+          value: "Es muy sencillo: "+
+                 "Basta con elegir alguna o varias de las categorías "+
+                 "que puedes encontrar en cada proyecto."
       },
       sub_contenido: {
          type: String,
          notify: true,
-         value:"(Ejemplo de cómo agradecer)."
+         value:"(Ejemplo de categoría)."
       },
       titulo_secundario:{
           type: String,
           notify: true,
-          value: "¿Qué valoraciones se pueden otorgar?"
+          value: "¿Qué kudos están disponibles?"
       },
       pathEventos:{
           type:String,
@@ -116,7 +116,7 @@
           listado.forEach(function(child) {
             var kudo = child.val();
             kudo.id=child.key;
-            about.push('kudos', kudo);            
+            about.push('kudos', kudo);
           });
           if(about.kudos){
              about.set('kudo', about.kudos[0]);
@@ -130,11 +130,11 @@
         firebase.database().ref(pathDevs).once('value').then(function(listado) {
           listado.forEach(function(child) {
             var member = child.val();
-            about.push('members', member);            
+            about.push('members', member);
           });
         });
     },
-    describirKudo: function(event) {        
+    describirKudo: function(event) {
         var kudoSeleccionado = event.model['__data__'];
         var idKudo = kudoSeleccionado.kudo.id;
         var idBtnKudo = this.$$('#'+idKudo);

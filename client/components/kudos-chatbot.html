@@ -56,16 +56,17 @@
           var objetivoSpeech = metricaSpeech.replace("||objetivo||",card.objetivo);
           var participantesSpeech = objetivoSpeech.replace("||participantes||",card.participantes);
           var tiempoSpeech = participantesSpeech.replace("||tiempo||",card.tiempo);
-          var newMessage = { from: card.leader, message: tiempoSpeech, align: "bot_label"};
+          var proyectoSpeech = tiempoSpeech.replace("||proyecto||",card.title);
+          var newMessage = { from: card.leader, message: proyectoSpeech, align: "bot_label"};
           var thisChat=this;
-          setTimeout(function(){ 
+          setTimeout(function(){
             thisChat.$.chat.scrollTop=thisChat.$.chat.scrollHeight;
            }, 100);
-          setTimeout(function(){ 
+          setTimeout(function(){
             thisChat.$.wait.style.display = "none";
             thisChat.push('mensajes', newMessage);
            }, 800);
-          setTimeout(function(){ 
+          setTimeout(function(){
             thisChat.$.chat.scrollTop=thisChat.$.chat.scrollHeight;
            }, 1000);
         },
@@ -76,14 +77,14 @@
           this.$.txtMessage.value="";
           this.$.btnSendMessage.data=card.id;
           this.$.titleBot.innerHTML=card.title;
-          var query = "Iniciar con " + this.userFirstName + " en " +card.id;
-          query = query.replace("á", "a"); query = query.replace("Á", "A");
-          query = query.replace("é", "e"); query = query.replace("É", "E");
-          query = query.replace("í", "i"); query = query.replace("Í", "I");
-          query = query.replace("ó", "o"); query = query.replace("Ó", "O");
-          query = query.replace("ú", "u"); query = query.replace("Ú", "U");
-          query = query.replace("ñ", "n"); query = query.replace("Ñ", "N");
-          this.set("apiRequestBody", { query : [ query ], lang: "es", sessionId: this.userEmail});
+          var queryValue = "Iniciar con " + this.userFirstName + " en " +card.id;
+          queryValue = queryValue.replace("á", "a"); queryValue = queryValue.replace("Á", "A");
+          queryValue = queryValue.replace("é", "e"); queryValue = queryValue.replace("É", "E");
+          queryValue = queryValue.replace("í", "i"); queryValue = queryValue.replace("Í", "I");
+          queryValue = queryValue.replace("ó", "o"); queryValue = queryValue.replace("Ó", "O");
+          queryValue = queryValue.replace("ú", "u"); queryValue = queryValue.replace("Ú", "U");
+          queryValue = queryValue.replace("ñ", "n"); queryValue = queryValue.replace("Ñ", "N");
+          this.set("apiRequestBody", { query : [ queryValue ], lang: "es", sessionId: this.userEmail});
           this.$.api.generateRequest();
         },
         sendMessage:function(){
@@ -91,7 +92,14 @@
             this.$.wait.style.display = "block";
             var newMessage = { from: this.userFirstName, message: this.$.txtMessage.value, align: "human_label"};
             this.push('mensajes', newMessage);
-            this.set("apiRequestBody", { query : [ this.$.txtMessage.value ], lang: "es", sessionId: this.userEmail});
+            var queryValue = this.$.txtMessage.value;
+            queryValue = queryValue.replace("á", "a"); queryValue = queryValue.replace("Á", "A");
+            queryValue = queryValue.replace("é", "e"); queryValue = queryValue.replace("É", "E");
+            queryValue = queryValue.replace("í", "i"); queryValue = queryValue.replace("Í", "I");
+            queryValue = queryValue.replace("ó", "o"); queryValue = queryValue.replace("Ó", "O");
+            queryValue = queryValue.replace("ú", "u"); queryValue = queryValue.replace("Ú", "U");
+            queryValue = queryValue.replace("ñ", "n"); queryValue = queryValue.replace("Ñ", "N");
+            this.set("apiRequestBody", { query : [ queryValue ], lang: "es", sessionId: this.userEmail});
             this.$.api.generateRequest();
             this.$.txtMessage.value = "";
           }
@@ -101,6 +109,4 @@
         }
       });
     </script>
-
-
 </dom-module>

@@ -4,12 +4,13 @@
   "authors": [
     "devnovators"
   ],
-  "description": "Kudos App for PI1 Demo",
+  "description": "BBVA Kudos",
   "main": "index.html",
   "keywords": [
     "kudos",
-    "pi1",
+    "macrocomite",
     "demo",
+    "pi",
     "devnovators",
     "hack"
   ],
