@@ -224,11 +224,9 @@
           var data = e.model['__data__'];
           var idCard = data.card.id;
           var ratingCard = this.$$('#star_' + idCard).rate;
-          var ref = firebase.database().ref("eventos/" + this.activeEvent + "/users/" + this.userEmail + "/" + idCard );
-          //ref.update({rating: ratingCard});
-
+          var ref = firebase.database().ref("eventos/" + this.activeEvent + "/users/" + this.userEmail  );
           var updates = {};
-          updates["/rating"] = ratingCard;
+          updates["/" + idCard + "/rating"] = ratingCard;
           var userData = {
             name: this.userName,
             picture: this.userPicture
