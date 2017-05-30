@@ -12,7 +12,7 @@
     <template id="arrBlocks" is="dom-repeat" items="{{blocks}}" as="block">
       <paper-card style="width:100%">
         <div>
-          <div class="rate-header titleProject" style$="height:40px;background:{{block.color}}" on-click="ocultar" data-args$="[[block.title]]">Bloque {{block.title}}
+          <div class="rate-header titleProject" style$="height:40px;background:{{block.color}}" on-click="ocultar" data-args$="[[block.title]]">&gt; {{block.title}}
           <!--<paper-icon-button icon="icons:arrow-drop-down" style="float:right;"></paper-icon-button></div>-->
         </div>
         <iron-collapse id="clp_[[block.title]]" style="width:100%;">
@@ -27,7 +27,7 @@
                       <div>{{card.description}}</div>
                       <div>[[card.linkLabel]]&nbsp;&nbsp;<a href="[[card.linkValue]]" target="_blank">[[card.linkValue]]</a></div>
                       </div>
-                    <div class="div_feedback">
+                    <div class="div_feedback" style="vertical-align:top;">
                       <paper-button style="margin-top: 3px;" class="rate-icon bot" id="{{card.id}}" data='{{card}}' on-click="openBot" style$="display:[[card.withChat]]">
                         Chatbot<iron-icon icon="communication:live-help" data='{{card}}'></iron-icon>
                       </paper-button>
@@ -49,7 +49,7 @@
                   </template>
                 </div>
                 <div class="valoracion-star">
-                  <star-rating stars="5" id="star_{{card.id}}" on-click="rankear" ></star-rating>
+                  <star-rating stars="3" id="star_{{card.id}}" on-click="rankear" ></star-rating>
                   {{getRatingCardUser(card.id)}}
                 </div>
                 </div>
@@ -60,7 +60,7 @@
       </paper-card>
     </template>
     <paper-dialog id="feedback" >
-      <h2 id="titleFeedback">Feedback para:</h2>
+      <h2 id="titleFeedback">Quick feedback for:</h2>
       <paper-textarea id="txtFeedback" label="Escribe tu feedback..."></paper-textarea>
       <div class="buttons">
         <paper-button id="btnFeedback" on-click="sendFeedback" autofocus>Enviar</paper-button>

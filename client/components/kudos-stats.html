@@ -8,7 +8,7 @@
   </div>
   <paper-tabs selected="{{selected}}">
     <paper-tab>Valoraciones</paper-tab>
-    <paper-tab>Agradecimientos</paper-tab>
+    <!--<paper-tab>Agradecimientos</paper-tab>-->
     <paper-tab>Feedback</paper-tab>
   </paper-tabs>
 
@@ -19,12 +19,12 @@
         <div style="text-align:left;margin-left:10px;">
             <div id="estrella_{{card.id}}" data=0 style="vertical-align:middle;display:inline-block; font-weight:bold; width:18px;">0</div>
             <div style="display:inline-block;width: 30px;"><iron-icon icon="icons:star" style="color:#dada0c;width:20px;height:17px;"></iron-icon></div>
-            <div style="vertical-align:middle;display:inline-block;">{{card.title}}</div>
+            <div style="vertical-align:middle;display:inline-block;">{{card.titleBlock}} &gt; {{card.title}}</div>
       </div>
       </template>
     </div>
 
-    <div class="resultFeedback">
+    <!--<div class="resultFeedback">
       <h3>Ranking por Feedback</h3>
       <span id="numUsers">(Número de usuarios: {{numUsers}})</span>
       <template is="dom-repeat" items="{{users}}" as="user">
@@ -41,24 +41,19 @@
           </div>
         </div>
       </template>
-    </div>
+    </div>-->
 
     <div class="resultFeedback">
       <h3>Revisa la info (click) por cada proyecto</h3>
       <template is="dom-repeat" items="{{cards}}" as="card">
         <div class="heading" on-click="toggleRanking" data="{{card.id}}" style="background:{{card.color}}">
-          {{card.titleBlock}} - {{card.title}}
+          {{card.titleBlock}} &gt; {{card.title}}
         </div>
         <iron-collapse id="cl_{{card.id}}">
           <div class="content">
-            <div>
-              <span><b>Kudos</b></span>
-              <div id="kd_{{card.id}}"></div>
-            </div>
-            <div>
-              <span><b>Feedback</b></span>
-              <div id="fb_{{card.id}}"></div>
-            </div>
+            <div><div id="st_{{card.id}}"></div></div>
+            <div><span><b>Kudos</b></span><div id="kd_{{card.id}}"></div></div>
+            <div><span><b>Feedback</b></span><div id="fb_{{card.id}}"></div></div>
           </div>
         </iron-collapse>
       </template>
@@ -69,29 +64,12 @@
  Polymer({
     is: 'kudos-stats',
     properties: {
-      activeEvent:{
-        type: String,
-        notify:true
-      },
-      cards:{
-        type: Array,
-        notify:true
-      },
-      users:{
-        type: Array,
-        notify:true
-      },
-      listUsers:{
-        type: Object,
-        notify:true
-      },
-      numUsers:{
-        type: String,
-        notify:true
-      },
-      selected: {
-          value: 0
-      }
+      activeEvent   : { type: String, notify:true },
+      cards         : { type: Array, notify:true },
+      users         : { type: Array, notify:true },
+      listUsers     : { type: Object, notify:true },
+      numUsers      : { type: String, notify:true },
+      selected      : { value: 0 }
     },
     getCards:function(){
       var ref = firebase.database().ref("eventos/" + this.activeEvent + "/blocks");
@@ -101,23 +79,25 @@
         snapshot.forEach(function(child) {
           var block = child.val();
           for (var idCard in block.cards) {
-            var card={};
-            card=block.cards[idCard];
-            card.titleBlock=block.title;
-            card.color=block.color;
-            card.id=idCard;
-            card.rating=0;
+            var card        = {};
+            card            = block.cards[idCard];
+            card.id         = idCard;
+            card.titleBlock = block.title;
+            card.color      = block.color;
+            card.rating     = 0;
             self.push('cards', card);
           }
         });
       });
     },
     getKudosCard:function(idCard){
-      var self=this;
+      var self = this;
       var users = self.listUsers;
+      var stars = 0; var starUsers = 0;
       var esinnovador = 0; var granesfuerzo = 0; var loentiendo = 0; var loqesperaba = 0; var megusta = 0; var mesirve = 0;
-      self.$$('#fb_' +idCard).innerHTML='';
-      self.$$('#kd_' +idCard).innerHTML='';
+      self.$$('#st_' + idCard).innerHTML = '';
+      self.$$('#fb_' + idCard).innerHTML = '';
+      self.$$('#kd_' + idCard).innerHTML = '';
       var listFeedback='<ul>';
       for (var user in users) {
         for (var card in users[user]) {
@@ -139,29 +119,26 @@
                 if (kudos.innovador == true) { esinnovador++; }
                 if (kudos.calidad == true) { granesfuerzo++; }
                 if (kudos.rentable == true) { loentiendo++; }
-                //if (kudos.loqesperaba == true) { loqesperaba++; }
-                //if (kudos.megusta == true) { megusta++; }
-                //if (kudos.mesirve == true) { mesirve++; }
+              } else if (prop == 'rating') {
+                stars = stars + users[user][card]['rating'];
+                if (users[user][card]['rating'] > 0) { starUsers++; }
               }
             }
             if (feedback.toString().trim().length>0 != '') {
-              listFeedback=listFeedback + '<li>'+ feedback + '</li>';
+              listFeedback = listFeedback + '<li>'+ feedback + '</li>';
             }
           }
         }
       }
+      var _stars='<div><div class="userSection"><b>Valoración</b> </div><div class="userSection2">'+ stars + ' stars / ' + starUsers + ' users = ' + stars/starUsers + '</div></div>';
       var _kudos='';
-      _kudos = '<div><div class="userSection">Innovador: </div><div class="userSection">'+ esinnovador + '</div></div>' ;
-      _kudos = _kudos + '<div><div class="userSection">Calidad: </div><div class="userSection">'+ granesfuerzo + '</div></div>' ;
-      _kudos = _kudos + '<div><div class="userSection">Rentable: </div><div class="userSection">'+ loentiendo + '</div></div>' ;
-      //_kudos = _kudos + '<div><div class="userSection">Lo que esperaba: </div><div class="userSection">'+ loqesperaba + '</div></div>' ;
-      //_kudos = _kudos + '<div><div class="userSection">Me gusta: </div><div class="userSection">'+ megusta + '</div></div>' ;
-      //_kudos = _kudos + '<div><div class="userSection">Me sirve: </div><div class="userSection">'+ mesirve + '</div></div>';
+      _kudos = '<div><div class="userSection">I agree: </div><div class="userSection2">'+ esinnovador + ' users</div></div>' ;
+      _kudos = _kudos + '<div><div class="userSection">Discuss: </div><div class="userSection2">'+ granesfuerzo + ' users</div></div>' ;
+      self.$$('#st_' +idCard).innerHTML=_stars;
       self.$$('#kd_' +idCard).innerHTML=_kudos;
       self.$$('#fb_' +idCard).innerHTML=listFeedback+'</ul>';
     },
-    getRanking:function(){
-      //console.log("dddd");
+    getRanking:function() {
       var self=this;
       firebase.database().ref('eventos/' + this.activeEvent +'/users').once('value',function(snapshot) {
         var users = snapshot.val();
@@ -212,8 +189,6 @@
                 }else{
                   strRating= self.$$('#estrella_' +card).data;
                   totRating=parseInt(strRating);
-                  //console.info("existe estrella: " + strRating);
-                  //console.info("existe estrella 2 : " + totRating);
                 }
                   totRating=totRating+rating;
                   self.$$('#estrella_' +card).data=totRating;
