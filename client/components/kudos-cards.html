@@ -23,13 +23,16 @@
                 <div>
                   <div class="rate-header titleProject" style$="background:{{card.color}}">{{card.title}}</div>
                   <div class="rate-name">
-                    <div class="div_middle">{{card.description}}</div>
+                    <div class="div_middle">
+                      <div>{{card.description}}</div>
+                      <div>[[card.linkLabel]]&nbsp;&nbsp;<a href="[[card.linkValue]]" target="_blank">[[card.linkValue]]</a></div>
+                      </div>
                     <div class="div_feedback">
-                      <paper-button class="rate-icon bot" id="{{card.id}}" data='{{card}}' on-click="openBot" style$="display:[[card.withChat]]">
-                        Pregúntanos algo<iron-icon icon="communication:live-help" data='{{card}}'></iron-icon>
+                      <paper-button style="margin-top: 3px;" class="rate-icon bot" id="{{card.id}}" data='{{card}}' on-click="openBot" style$="display:[[card.withChat]]">
+                        Chatbot<iron-icon icon="communication:live-help" data='{{card}}'></iron-icon>
                       </paper-button>
-                      <paper-button style="margin-top: 5px;" class="rate-icon feeback" id="{{card.id}}" data='{{card}}' on-click="openModal">
-                        Danos feedback <iron-icon icon="announcement" data='{{card}}'></iron-icon>
+                      <paper-button style="margin-top: 3px;" class="rate-icon feeback" id="{{card.id}}" data='{{card}}' on-click="openModal">
+                        Feedback <iron-icon icon="announcement" data='{{card}}'></iron-icon>
                       </paper-button>
                     </div>
                   </div>
@@ -113,7 +116,7 @@
           self = this;
           for (var card in block.cards) {
             var newCard = { id:card, title:block.cards[card].title, description:block.cards[card].description,
-              leader:block.cards[card].leader, color:block.cards[card].color, withChat:block.cards[card].withChat };
+              leader:block.cards[card].leader, color:block.cards[card].color, withChat:block.cards[card].withChat, linkLabel:block.cards[card].linkLabel, linkValue:block.cards[card].linkValue };
             //parameters
             newCard.objetivo        =block.cards[card].parameters.objetivo;
             newCard.detalles        =block.cards[card].parameters.detalles;

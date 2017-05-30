@@ -23,7 +23,7 @@
          </div>
         </template>
         <br>
-        <h1>¿Y los culpables? ¡Que pasen los... <b>Devnovators</b>!</h1>
+        <h1>¿Y los culpables? ¡Que pasen los <b>Devnovators</b>!</h1>
         <div>
             <template id="team-member" is="dom-repeat" items="{{members}}" as="member">
               <template is="dom-if" if="{{verifyPic(member.pic)}}">
@@ -34,6 +34,8 @@
               </template>
             </template>
         </div>
+        <div><img src="../images/devnovators.jpg" class="photo"></div>
+        <div><span style="color:#0072BB; font-size:1em; font-weight:500;">Devnovators - Perú 2017</span></div>
     </div>
 </template>
 <script>
@@ -48,25 +50,24 @@
       titulo_des: {
           type: String,
           notify: true,
-          value: "Es un espacio digital que busca conectar a la comunidad BBVA con " +
-           "los proyectos estratégicos, a través de agradecimientos, feedback, valoración y preguntas"
+          value: "Es un espacio digital, creado por Devnovators (Perú) en una Hackathon, que busca conectar a la comunidad BBVA con los proyectos estratégicos a través de agradecimientos (kudos), feedback (comentarios), valoración (estrellas) y preguntas (chatbot) para la mejora continua de los mismos"
       },
       sub_titulo:{
           type:String,
           notify: true,
-          value: "¿Cómo dejar un agradecimiento (kudo) a un proyecto?"
+          value: "¿Cómo agradecer (entregar kudo) a un proyecto?"
       },
       contenido_sub_titulo:{
           type: String,
           notify: true,
           value: "Es muy sencillo: "+
-                 "Basta con elegir alguna o varias de las categorías "+
-                 "que puedes encontrar en cada proyecto."
+                 "Basta con elegir los atributos "+
+                 "que te sorprendieron de cada proyecto."
       },
       sub_contenido: {
          type: String,
          notify: true,
-         value:"(Ejemplo de categoría)."
+         value:"(Ejemplo de atributo)."
       },
       titulo_secundario:{
           type: String,

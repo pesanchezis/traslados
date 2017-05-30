@@ -4,7 +4,7 @@
  <style include="cards"></style>
  <style include="stats"></style>
   <div class="card">
-    <h3>Resultados macrocomité 2017-I</h3>
+    <h3>Resultados del evento</h3>
   </div>
   <paper-tabs selected="{{selected}}">
     <paper-tab>Valoraciones</paper-tab>
@@ -17,7 +17,7 @@
       <h3>Ranking general</h3>
       <template is="dom-repeat" items="{{cards}}" as="card">
         <div style="text-align:left;margin-left:10px;">
-            <div id="estrella_{{card.id}}" data=0 style="vertical-align:middle;display:inline-block; font-weight:bold; width:12px;">0</div>
+            <div id="estrella_{{card.id}}" data=0 style="vertical-align:middle;display:inline-block; font-weight:bold; width:18px;">0</div>
             <div style="display:inline-block;width: 30px;"><iron-icon icon="icons:star" style="color:#dada0c;width:20px;height:17px;"></iron-icon></div>
             <div style="vertical-align:middle;display:inline-block;">{{card.title}}</div>
       </div>
@@ -44,7 +44,7 @@
     </div>
 
     <div class="resultFeedback">
-      <h3>Revisa los comentarios por cada sección</h3>
+      <h3>Revisa la info (click) por cada proyecto</h3>
       <template is="dom-repeat" items="{{cards}}" as="card">
         <div class="heading" on-click="toggleRanking" data="{{card.id}}" style="background:{{card.color}}">
           {{card.titleBlock}} - {{card.title}}
