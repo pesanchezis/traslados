@@ -164,9 +164,15 @@
                 if (!firebase.auth().currentUser) {
                     var provider = new firebase.auth.GoogleAuthProvider();
                     var parent = this;
-                    firebase.auth().signInWithPopup(provider).then(function(result) {
-                        parent.set('logged', true);
-                        parent.showCards();
+                    //firebase.auth().signInWithPopup(provider).then(function(result) {
+                    //    parent.set('logged', true);
+                    //    parent.showCards();
+                    firebase.auth().signInWithRedirect(provider);
+                    firebase.auth().getRedirectResult().then(function(result) {
+                      //if (result.credential) { var token = result.credential.accessToken; }
+                      //var user = result.user;
+                      parent.set('logged', true);
+                      parent.showCards();
                     }).catch(function(error) { //error.code //error.message //error.credential
                         if (error.code === 'auth/account-exists-with-different-credential') {
                             alert('You have already signed up with a different auth provider for that email.');
