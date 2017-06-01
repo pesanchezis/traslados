@@ -42,7 +42,7 @@
                   <!-- Lista de Kudos X Tarjeta -->
                   <template id="tmtKudo" is="dom-repeat" items="{{kudos}}" as="kudo">
                     {{getKudosUser(card.id,kudo.id)}}
-                    <paper-button class="kudo" toggles  id="id_{{card.id}}_{{kudo.id}}" on-click="valorar">
+                    <paper-button class$="[[kudo.id]]" toggles  id="id_{{card.id}}_{{kudo.id}}" on-click="valorar">
                       <iron-icon icon="{{kudo.icon}}"></iron-icon> {{kudo.title}}
                     </paper-button>
                     <paper-tooltip for="id_{{card.id}}_{{kudo.id}}" position="top" style="max-width:100px;">{{kudo.title}}<br>{{kudo.description}}</paper-tooltip>
@@ -144,7 +144,7 @@
           var self=this;
           this.$.txtFeedback.value="";
           this.$.btnFeedback.data=card.id;
-          this.$.titleFeedback.innerHTML="Feedback para:<br>" + card.title;
+          this.$.titleFeedback.innerHTML="Quick feedback for:<br>" + card.title;
           this.$.feedback.open();
           var ref = firebase.database().ref("eventos/" + this.activeEvent + "/users/" + this.userEmail+ "/"+ card.id + "/comments");
           ref.once('value').then(function(snapshot) {
