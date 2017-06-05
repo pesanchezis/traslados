@@ -94,6 +94,7 @@
       var self = this;
       var users = self.listUsers;
       var stars = 0; var starUsers = 0; var tier = '';
+      var oneStar = 0; var twoStar = 0; var threeStar = 0;
       var esinnovador = 0; var granesfuerzo = 0; var loentiendo = 0; var loqesperaba = 0; var megusta = 0; var mesirve = 0;
       self.$$('#st_' + idCard).innerHTML = '';
       self.$$('#fb_' + idCard).innerHTML = '';
@@ -122,6 +123,9 @@
               } else if (prop == 'rating') {
                 stars = stars + users[user][card]['rating'];
                 if (users[user][card]['rating'] > 0) { starUsers++; }
+                if (users[user][card]['rating'] == 1) { oneStar++; console.log('oneStar++'); }
+                if (users[user][card]['rating'] == 2) { twoStar++;console.log('twoStar++'); }
+                if (users[user][card]['rating'] == 3) { threeStar++;console.log('threeStar++'); }
               }
             }
             if (feedback.toString().trim().length>0 != '') {
@@ -134,10 +138,10 @@
       if (average >= 3) { tier = 'TIER1'; }
       else if (average >=2 ) { tier = 'TIER2' }
       else { tier = 'TIER3'; }
-      var _stars='<div><div class="userSection"><b>Valoración</b> </div><div class="userSection2">' + tier + ' - ' + starUsers + ' users (' + stars + ' stars)</div></div>';
+      var _stars='<div><div class="userSection" style="vertical-align:top;"><b>Valoración</b> </div><div class="userSection2">TIER1 (3 estrellas) - ' + threeStar  + ' usuarios' + '<br />TIER2 (2 estrellas) - ' + twoStar + ' usuarios<br />TIER3 (1 estrella ) - ' + oneStar + ' usuarios</div></div>';
       var _kudos='';
-      _kudos = '<div><div class="userSection">I agree: </div><div class="userSection2">'+ esinnovador + ' users</div></div>' ;
-      _kudos = _kudos + '<div><div class="userSection">Discuss: </div><div class="userSection2">'+ granesfuerzo + ' users</div></div>' ;
+      _kudos = '<div><div class="userSection">I agree: </div><div class="userSection2">'+ esinnovador + ' usuarios</div></div>' ;
+      _kudos = _kudos + '<div><div class="userSection">Discuss: </div><div class="userSection2">'+ granesfuerzo + ' usuarios</div></div>' ;
       self.$$('#st_' +idCard).innerHTML=_stars;
       self.$$('#kd_' +idCard).innerHTML=_kudos;
       self.$$('#fb_' +idCard).innerHTML=listFeedback+'</ul>';
