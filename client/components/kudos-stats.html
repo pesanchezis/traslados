@@ -93,7 +93,7 @@
     getKudosCard:function(idCard){
       var self = this;
       var users = self.listUsers;
-      var stars = 0; var starUsers = 0;
+      var stars = 0; var starUsers = 0; var tier = '';
       var esinnovador = 0; var granesfuerzo = 0; var loentiendo = 0; var loqesperaba = 0; var megusta = 0; var mesirve = 0;
       self.$$('#st_' + idCard).innerHTML = '';
       self.$$('#fb_' + idCard).innerHTML = '';
@@ -130,7 +130,11 @@
           }
         }
       }
-      var _stars='<div><div class="userSection"><b>Valoración</b> </div><div class="userSection2">'+ stars + ' stars / ' + starUsers + ' users = ' + stars/starUsers + '</div></div>';
+      var average = stars / starUsers;
+      if (average >= 3) { tier = 'TIER1'; }
+      else if (average >=2 ) { tier = 'TIER2' }
+      else { tier = 'TIER3'; }
+      var _stars='<div><div class="userSection"><b>Valoración</b> </div><div class="userSection2">' + tier + ' - ' + starUsers + ' users (' + stars + ' stars)</div></div>';
       var _kudos='';
       _kudos = '<div><div class="userSection">I agree: </div><div class="userSection2">'+ esinnovador + ' users</div></div>' ;
       _kudos = _kudos + '<div><div class="userSection">Discuss: </div><div class="userSection2">'+ granesfuerzo + ' users</div></div>' ;
