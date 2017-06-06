@@ -123,9 +123,9 @@
               } else if (prop == 'rating') {
                 stars = stars + users[user][card]['rating'];
                 if (users[user][card]['rating'] > 0) { starUsers++; }
-                if (users[user][card]['rating'] == 1) { oneStar++; console.log('oneStar++'); }
-                if (users[user][card]['rating'] == 2) { twoStar++;console.log('twoStar++'); }
-                if (users[user][card]['rating'] == 3) { threeStar++;console.log('threeStar++'); }
+                if (users[user][card]['rating'] == 1) { oneStar++; }
+                if (users[user][card]['rating'] == 2) { twoStar++; }
+                if (users[user][card]['rating'] == 3) { threeStar++; }
               }
             }
             if (feedback.toString().trim().length>0 != '') {

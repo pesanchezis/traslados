@@ -40,13 +40,19 @@
                 <div style="display: table; width: 100%;">
                 <div class="card-actions kudos-button">
                   <!-- Lista de Kudos X Tarjeta -->
-                  <template id="tmtKudo" is="dom-repeat" items="{{kudos}}" as="kudo">
+                  <!--<template id="tmtKudo" is="dom-repeat" items="{{kudos}}" as="kudo">
                     {{getKudosUser(card.id,kudo.id)}}
                     <paper-button class$="[[kudo.id]]" toggles  id="id_{{card.id}}_{{kudo.id}}" on-click="valorar">
                       <iron-icon icon="{{kudo.icon}}"></iron-icon> {{kudo.title}}
                     </paper-button>
                     <paper-tooltip for="id_{{card.id}}_{{kudo.id}}" position="top" style="max-width:100px;">{{kudo.title}}<br>{{kudo.description}}</paper-tooltip>
-                  </template>
+                  </template>-->
+                  <paper-button id="id_[[card.id]]_calidad" toggles on-click="valorarCalidad" class="calidad">
+                    <iron-icon icon="icons:record-voice-over"></iron-icon> Discuss 
+                  </paper-button>{{getKudosUser(card.id,'calidad')}}
+                  <paper-button id="id_[[card.id]]_innovador" toggles on-click="valorarInnovador" class="innovador">
+                    <iron-icon icon="icons:done"></iron-icon> I agree 
+                  </paper-button>{{getKudosUser(card.id,'innovador')}}
                 </div>
                 <div class="valoracion-star">
                   <star-rating stars="3" id="star_{{card.id}}" on-click="rankear" ></star-rating>
@@ -185,7 +191,7 @@
           var idCard = kudoSeleccionado.card.id;
           var idBtnKudo=this.$$('#id_' +idCard +'_' +idKudo);
           var voto = 1;
-          if (!idBtnKudo.active){
+          if (!idBtnKudo.active){ //botón inactivo
             voto = -1;
           }
           var refControl = firebase.database().ref('eventos/' + this.activeEvent +'/users').child(this.userEmail);
@@ -200,6 +206,40 @@
             refControl.update(updates);
           } else {
             firebase.database().ref('eventos/' + this.activeEvent +'/users').child(this.userEmail).child(idCard).child('kudos').child(idKudo).remove();
+          }
+        },
+        valorarCalidad:function(e) {
+          var buttonData = e.model['__data__'];
+          var projectId = buttonData.card.id;
+          var buttonActive = this.$$('#id_' + projectId + '_calidad').active;
+          var buttonPressed = 1;
+          if (!buttonActive) { buttonPressed = -1; }
+          var refControl = firebase.database().ref('eventos/' + this.activeEvent +'/users').child(this.userEmail);
+          if (buttonPressed > 0) {
+            var updates = {};
+            updates["/" + projectId + "/kudos/calidad"] = true;
+            updates["/profile"] = { name: this.userName, picture: this.userPicture };
+            refControl.update(updates);
+          } else {
+            firebase.database().ref('eventos/' + this.activeEvent +'/users').child(this.userEmail)
+              .child(projectId).child('kudos').child('calidad').remove();
+          }
+        },
+        valorarInnovador:function(e) {
+          var buttonData = e.model['__data__'];
+          var projectId = buttonData.card.id;
+          var buttonActive = this.$$('#id_' + projectId + '_innovador').active;
+          var buttonPressed = 1;
+          if (!buttonActive) { buttonPressed = -1; }
+          var refControl = firebase.database().ref('eventos/' + this.activeEvent +'/users').child(this.userEmail);
+          if (buttonPressed > 0) {
+            var updates = {};
+            updates["/" + projectId + "/kudos/innovador"] = true;
+            updates["/profile"] = { name: this.userName, picture: this.userPicture };
+            refControl.update(updates);
+          } else {
+            firebase.database().ref('eventos/' + this.activeEvent +'/users').child(this.userEmail)
+              .child(projectId).child('kudos').child('innovador').remove();
           }
         },
         getKudosUser:function(idCard,idKudo){
