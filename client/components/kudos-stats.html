@@ -44,7 +44,12 @@
     </div>-->
 
     <div class="resultFeedback">
-      <h3>Revisa la info (click) por cada proyecto</h3>
+      <div>
+        <paper-button id="btnReload" toggles on-click="reloadFeedback" class="reload">
+          <iron-icon icon="icons:autorenew"></iron-icon> Reload  
+        </paper-button>
+        <h3>Revisa cada proyecto (click)</h3>
+      </div>
       <template is="dom-repeat" items="{{cards}}" as="card">
         <div class="heading" on-click="toggleRanking" data="{{card.id}}" style="background:{{card.color}}">
           {{card.titleBlock}} &gt; {{card.title}}
@@ -220,6 +225,10 @@
       this.getKudosCard(idCard);
       this.$$('#cl_' +idCard).toggle();
     },
+    reloadFeedback:function(e) {
+      this.getCards();
+      this.getRanking();
+    }
   });
 </script>
 </dom-module>
