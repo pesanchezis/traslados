@@ -38,26 +38,25 @@
                   </div>
                 </div>
                 <div style="display: table; width: 100%;">
-                <div class="card-actions kudos-button">
-                  <!-- Lista de Kudos X Tarjeta -->
-                  <!--<template id="tmtKudo" is="dom-repeat" items="{{kudos}}" as="kudo">
+                <!--<div class="card-actions kudos-button">
+                  <template id="tmtKudo" is="dom-repeat" items="{{kudos}}" as="kudo">
                     {{getKudosUser(card.id,kudo.id)}}
                     <paper-button class$="[[kudo.id]]" toggles  id="id_{{card.id}}_{{kudo.id}}" on-click="valorar">
                       <iron-icon icon="{{kudo.icon}}"></iron-icon> {{kudo.title}}
                     </paper-button>
                     <paper-tooltip for="id_{{card.id}}_{{kudo.id}}" position="top" style="max-width:100px;">{{kudo.title}}<br>{{kudo.description}}</paper-tooltip>
-                  </template>-->
+                  </template>
                   <paper-button id="id_[[card.id]]_calidad" toggles on-click="valorarCalidad" class="calidad">
                     <iron-icon icon="icons:record-voice-over"></iron-icon> Discuss 
                   </paper-button>{{getKudosUser(card.id,'calidad')}}
                   <paper-button id="id_[[card.id]]_innovador" toggles on-click="valorarInnovador" class="innovador">
                     <iron-icon icon="icons:done"></iron-icon> I agree 
                   </paper-button>{{getKudosUser(card.id,'innovador')}}
-                </div>
-                <div class="valoracion-star">
-                  <star-rating stars="3" id="star_{{card.id}}" on-click="rankear" ></star-rating>
-                  {{getRatingCardUser(card.id)}}
-                </div>
+                  </div>-->
+                  <div class="valoracion-star">
+                    <star-rating stars="10" id="star_{{card.id}}" on-click="rankear" ></star-rating>
+                    {{getRatingCardUser(card.id)}}
+                  </div>
                 </div>
               </div>
             </paper-card>

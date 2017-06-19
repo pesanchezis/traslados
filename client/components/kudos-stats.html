@@ -8,7 +8,7 @@
   </div>
   <paper-tabs selected="{{selected}}">
     <paper-tab>Valoraciones</paper-tab>
-    <!--<paper-tab>Agradecimientos</paper-tab>-->
+    <paper-tab>Agradecimientos</paper-tab>
     <paper-tab>Feedback</paper-tab>
   </paper-tabs>
 
@@ -24,7 +24,7 @@
       </template>
     </div>
 
-    <!--<div class="resultFeedback">
+    <div class="resultFeedback">
       <h3>Ranking por Feedback</h3>
       <span id="numUsers">(Número de usuarios: {{numUsers}})</span>
       <template is="dom-repeat" items="{{users}}" as="user">
@@ -35,13 +35,14 @@
               <div class="primary">[[user.name]]</div>
               <address>
                 <div class="userSection">Feedbacks: [[user.numFeedback]]</div>
-                <div class="userSection">Kudos: [[user.numKudos]]</div>
+                <!--<div class="userSection">Kudos: [[user.numKudos]]</div>-->
+                <div class="userSection">Stars: [[user.numStars]]</div>
               </address>
             </div>
           </div>
         </div>
       </template>
-    </div>-->
+    </div>
 
     <div class="resultFeedback">
       <div>
@@ -57,7 +58,7 @@
         <iron-collapse id="cl_{{card.id}}">
           <div class="content">
             <div><div id="st_{{card.id}}"></div></div>
-            <div><span><b>Kudos</b></span><div id="kd_{{card.id}}"></div></div>
+            <!--<div><span><b>Kudos</b></span><div id="kd_{{card.id}}"></div></div>-->
             <div><span><b>Feedback</b></span><div id="fb_{{card.id}}"></div></div>
           </div>
         </iron-collapse>
@@ -103,7 +104,7 @@
       var esinnovador = 0; var granesfuerzo = 0; var loentiendo = 0; var loqesperaba = 0; var megusta = 0; var mesirve = 0;
       self.$$('#st_' + idCard).innerHTML = '';
       self.$$('#fb_' + idCard).innerHTML = '';
-      self.$$('#kd_' + idCard).innerHTML = '';
+      //self.$$('#kd_' + idCard).innerHTML = '';
       var listFeedback='<ul>';
       for (var user in users) {
         for (var card in users[user]) {
@@ -143,12 +144,13 @@
       if (average >= 3) { tier = 'TIER1'; }
       else if (average >=2 ) { tier = 'TIER2' }
       else { tier = 'TIER3'; }
-      var _stars='<div><div class="userSection" style="vertical-align:top;"><b>Valoración</b> </div><div class="userSection2">TIER1 (3 estrellas) - ' + threeStar  + ' usuarios' + '<br />TIER2 (2 estrellas) - ' + twoStar + ' usuarios<br />TIER3 (1 estrella ) - ' + oneStar + ' usuarios</div></div>';
-      var _kudos='';
-      _kudos = '<div><div class="userSection">I agree: </div><div class="userSection2">'+ esinnovador + ' usuarios</div></div>' ;
-      _kudos = _kudos + '<div><div class="userSection">Discuss: </div><div class="userSection2">'+ granesfuerzo + ' usuarios</div></div>' ;
+    var _stars='<div><div class="userSection" style="vertical-align:top;"><b>Valoración</b> </div><div class="userSection2">' + stars + ' stars / ' + starUsers + ' users = ' + average + '</div></div>';
+      //var _stars='<div><div class="userSection" style="vertical-align:top;"><b>Valoración</b> </div><div class="userSection2">TIER1 (3 estrellas) - ' + threeStar  + ' usuarios' + '<br />TIER2 (2 estrellas) - ' + twoStar + ' usuarios<br />TIER3 (1 estrella ) - ' + oneStar + ' usuarios</div></div>';
+      //var _kudos='';
+      //_kudos = '<div><div class="userSection">I agree: </div><div class="userSection2">'+ esinnovador + ' usuarios</div></div>' ;
+      //_kudos = _kudos + '<div><div class="userSection">Discuss: </div><div class="userSection2">'+ granesfuerzo + ' usuarios</div></div>' ;
       self.$$('#st_' +idCard).innerHTML=_stars;
-      self.$$('#kd_' +idCard).innerHTML=_kudos;
+      //self.$$('#kd_' +idCard).innerHTML=_kudos;
       self.$$('#fb_' +idCard).innerHTML=listFeedback+'</ul>';
     },
     getRanking:function() {
@@ -165,6 +167,7 @@
           _user.picture=users[user].profile.picture;
           var numKudos=0;
           var numFeedback=0;
+          var numStars=0;
           for (var card in users[user]) {
             var vote = users[user][card];
             for (var prop in vote) {
@@ -192,6 +195,7 @@
                 }else{
                   rating = users[user][card]['rating'];
                 }
+                numStars = numStars + rating;
                 var strRating="";
                 var totRating=0;
 
@@ -203,15 +207,16 @@
                   strRating= self.$$('#estrella_' +card).data;
                   totRating=parseInt(strRating);
                 }
-                  totRating=totRating+rating;
-                  self.$$('#estrella_' +card).data=totRating;
-                  self.$$('#estrella_' +card).innerHTML=totRating;
-                  //self.cards[card].rating=totRating;
+                totRating=totRating+rating;
+                self.$$('#estrella_' +card).data=totRating;
+                self.$$('#estrella_' +card).innerHTML=totRating;
+                //self.cards[card].rating=totRating;
               }
             }
           }
           _user.numKudos=numKudos;
           _user.numFeedback=numFeedback;
+          _user.numStars=numStars;
           self.push('users',_user);
           self.users.sort(function(a,b) {return (a.numFeedback > b.numFeedback) ? -1 : ((b.numFeedback > a.numFeedback) ? 1 : 0);} );
           self.cards.sort(function(a,b) {return (a.rating > b.rating) ? -1 : ((b.rating > a.rating) ? 1 : 0);} );
