@@ -15,12 +15,13 @@
   <iron-pages selected="{{selected}}">
     <div class="resultFeedback">
       <h3>Ranking general</h3>
+      <div id="id_sorted_cards" class="resultFeedback"></div>
       <template is="dom-repeat" items="{{cards}}" as="card">
-        <div style="text-align:left;margin-left:10px;">
+        <div style$="text-align:left;margin-left:10px;display:[[display]]"">
             <div id="estrella_{{card.id}}" data=0 style="vertical-align:middle;display:inline-block; font-weight:bold; width:18px;">0</div>
             <div style="display:inline-block;width: 30px;"><iron-icon icon="icons:star" style="color:#dada0c;width:20px;height:17px;"></iron-icon></div>
             <div style="vertical-align:middle;display:inline-block;">{{card.titleBlock}} &gt; {{card.title}}</div>
-      </div>
+        </div>
       </template>
     </div>
 
@@ -75,7 +76,9 @@
       users         : { type: Array, notify:true },
       listUsers     : { type: Object, notify:true },
       numUsers      : { type: String, notify:true },
-      selected      : { value: 0 }
+      selected      : { value: 0 },
+      display       : { value: "block" },
+      sortedCards   : { type: Array, notify:true }
     },
     getCards:function(){
       var ref = firebase.database().ref("eventos/" + this.activeEvent + "/blocks");
@@ -182,35 +185,32 @@
                 }
               } else if (prop == 'kudos') {
                 var kudos = users[user][card]['kudos'];
-                for(var kudo in kudos){
-                  if(kudos[kudo]){
-                    numKudos++;
-                  }
+                for (var kudo in kudos){
+                  if (kudos[kudo]){ numKudos++; }
                 }
               }else if(prop == 'rating'){
                 //console.log("rating: " + users[user][card]['rating']);
                 var rating =0;
-                if(users[user][card]['rating'] == null){
-                  rating = 0;
-                }else{
-                  rating = users[user][card]['rating'];
-                }
+                if (users[user][card]['rating'] == null){ rating = 0;
+                } else { rating = users[user][card]['rating']; }
                 numStars = numStars + rating;
                 var strRating="";
                 var totRating=0;
 
-                if(self.$$('#estrella_' +card).data==undefined){
-                  //console.info("no existe estrella");
-                  totRating=0;
-
-                }else{
+                if (self.$$('#estrella_' +card).data == undefined) { totRating=0;
+                } else {
                   strRating= self.$$('#estrella_' +card).data;
                   totRating=parseInt(strRating);
                 }
                 totRating=totRating+rating;
                 self.$$('#estrella_' +card).data=totRating;
                 self.$$('#estrella_' +card).innerHTML=totRating;
-                //self.cards[card].rating=totRating;
+                var id = card;
+                var cardObject = self.cards.reduce(function(a, b){
+                  return (a.id==id && a) || (b.id == id && b)
+                });
+                var obj = self.findObjectByKey(self.cards, 'id', cardObject.id);
+                obj.rating=totRating;
               }
             }
           }
@@ -218,12 +218,31 @@
           _user.numFeedback=numFeedback;
           _user.numStars=numStars;
           self.push('users',_user);
-          self.users.sort(function(a,b) {return (a.numFeedback > b.numFeedback) ? -1 : ((b.numFeedback > a.numFeedback) ? 1 : 0);} );
-          self.cards.sort(function(a,b) {return (a.rating > b.rating) ? -1 : ((b.rating > a.rating) ? 1 : 0);} );
         }
         self.numUsers=numUsers;
+        self.users.sort(function(a,b) {
+          return (a.numFeedback > b.numFeedback) ? -1 : ((b.numFeedback > a.numFeedback) ? 1 : 0);} );
+        self.cards.sort(function(a,b) {
+          return (a.rating > b.rating) ? -1 : ((b.rating > a.rating) ? 1 : 0);} );
+        self.sortedCards = self.cards;
+        var text = '';
+        for (var index in self.sortedCards) {
+          sortedCard = self.sortedCards[index];
+          text = text + '<div style="text-align:left;margin-left:10px;"><div id="estrella2_' + sortedCard.id + '" data=0 style="vertical-align:middle;display:inline-block; font-weight:bold; width:18px;">' + sortedCard.rating + '</div><div style="display:inline-block;width: 30px;"><iron-icon icon="icons:star" style="color:#dada0c;width:20px;height:17px;"></iron-icon></div><div style="vertical-align:middle;display:inline-block;">' + sortedCard.titleBlock + ' &gt; ' + sortedCard.title + '</div></div>';
+        }
+        text = text + '';
+        self.display = 'none';
+        self.$$('#id_sorted_cards').innerHTML = text;
       });
 
+    },
+    findObjectByKey:function(array, key, value) {
+      for (var i = 0; i < array.length; i++) {
+          if (array[i][key] === value) {
+              return array[i];
+          }
+      }
+      return null;
     },
     toggleRanking:function(e) {
       var idCard=Polymer.dom(e).localTarget.data;
