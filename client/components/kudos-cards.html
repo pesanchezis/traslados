@@ -31,7 +31,7 @@
                       <paper-button style="margin-top: 3px;" class="rate-icon bot" id="{{card.id}}" data='{{card}}' on-click="openBot" style$="display:[[card.withChat]]">
                         Chatbot<iron-icon icon="communication:live-help" data='{{card}}'></iron-icon>
                       </paper-button>
-                      <paper-button style="margin-top: 3px;" class="rate-icon feeback" id="{{card.id}}" data='{{card}}' on-click="openModal">
+                      <paper-button style="margin-top: 3px;" class="rate-icon feeback" id="{{card.id}}" data='{{card}}' on-click="openModalX" disabled>
                         Feedback <iron-icon icon="announcement" data='{{card}}'></iron-icon>
                       </paper-button>
                     </div>
@@ -54,8 +54,9 @@
                   </paper-button>{{getKudosUser(card.id,'innovador')}}
                   </div>-->
                   <div class="valoracion-star">
-                    <star-rating stars="10" id="star_{{card.id}}" on-click="rankear" ></star-rating>
+                    <!--<star-rating stars="10" id="star_{{card.id}}" on-click="rankearX" disabled></star-rating>-->
                     {{getRatingCardUser(card.id)}}
+                    <div id$="star_{{card.id}}"></div>
                   </div>
                 </div>
               </div>
@@ -259,7 +260,8 @@
               numStars=snapshot.val();
               self.stars=numStars;
             }
-            self.$$('#star_' +idCard).rate=numStars;
+            //self.$$('#star_' +idCard).rate=numStars;
+            self.$$('#star_' +idCard).innerHTML = numStars + ' stars';
           });
         },
         rankear:function(e) {
