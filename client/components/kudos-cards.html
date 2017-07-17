@@ -54,9 +54,9 @@
                   </paper-button>{{getKudosUser(card.id,'innovador')}}
                   </div>-->
                   <div class="valoracion-star">
-                    <!--<star-rating stars="10" id="star_{{card.id}}" on-click="rankearX" disabled></star-rating>-->
+                    <star-rating stars="5" id="star_{{card.id}}" on-click="rankear"></star-rating>
                     {{getRatingCardUser(card.id)}}
-                    <div id$="star_{{card.id}}"></div>
+                    <!--<div id$="star_{{card.id}}"></div>-->
                   </div>
                 </div>
               </div>
@@ -260,8 +260,8 @@
               numStars=snapshot.val();
               self.stars=numStars;
             }
-            //self.$$('#star_' +idCard).rate=numStars;
-            self.$$('#star_' +idCard).innerHTML = numStars + ' stars';
+            self.$$('#star_' +idCard).rate=numStars;
+            //self.$$('#star_' +idCard).innerHTML = numStars + ' stars';
           });
         },
         rankear:function(e) {
