@@ -55,7 +55,9 @@
     "iron-collapse": "PolymerElements/iron-collapse#^1.2.1",
     "paper-dialog-scrollable": "^1.1.5",
     "iron-ajax": "^1.4.3",
-    "star-rating": "*"
+    "star-rating": "*",
+    "paper-date-picker": "bendavis78/paper-date-picker#^1.2.1",
+    "vaadin-date-picker": "vaadin/vaadin-date-picker#^1.2.3"
   },
   "devDependencies": {
     "web-component-tester": "^4.0.0"
