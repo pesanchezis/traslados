@@ -59,11 +59,11 @@
                   </div>
                   <div class="valoracion-star">
                     <div style="width: 400px;">
-                      <vaadin-date-picker label="Fecha de Salida" placeholder="Elija fecha"></vaadin-date-picker>
-                      <vaadin-date-picker label="Fecha de Retorno" placeholder="Elija fecha"></vaadin-date-picker>
+                      <vaadin-date-picker on-click="grabarSalida" id="salida_{{card.id}}" label="Fecha de Salida" placeholder="Elija fecha"></vaadin-date-picker>
+                      <vaadin-date-picker on-click="grabarRetorno" id="retorno_{{card.id}}" label="Fecha de Retorno" placeholder="Elija fecha"></vaadin-date-picker>
                       </div>
                     <star-rating stars="5" id="star_{{card.id}}" on-click="rankear"></star-rating>
-                    {{getRatingCardUser(card.id)}}
+                    {{getRatingCardUser(card.id)}}{{getArriveDate(card.id)}}
                     <!--<div id$="star_{{card.id}}"></div>-->
                   </div>
                 </div>
@@ -272,6 +272,20 @@
             //self.$$('#star_' +idCard).innerHTML = numStars + ' stars';
           });
         },
+        getArriveDate:function(idCard){
+          self=this;
+          var ref = firebase.database().ref("eventos/" + this.activeEvent + "/users/" + this.userEmail + "/" + idCard + "/arriveDate");
+          ref.once('value').then(function(snapshot) {
+            var arriveDate ="";
+            if(snapshot.val()!=null){
+              arriveDate=snapshot.val();
+              console.log(arriveDate);
+              self.arriveDateLocal =arriveDate;
+            }
+            self.$$('#salida_'+idCard).value=arriveDate;
+          });
+        }
+        ,
         rankear:function(e) {
           var data = e.model['__data__'];
           var idCard = data.card.id;
@@ -279,6 +293,34 @@
           var ref = firebase.database().ref("eventos/" + this.activeEvent + "/users/" + this.userEmail  );
           var updates = {};
           updates["/" + idCard + "/rating"] = ratingCard;
+          var userData = {
+            name: this.userName,
+            picture: this.userPicture
+          };
+          updates["/profile"] = userData;
+          ref.update(updates);
+        },
+        grabarSalida:function(e) {
+          var data = e.model['__data__'];
+          var idCard = data.card.id;
+          var fechaSalida = this.$$('#salida_' + idCard).value;
+          var ref = firebase.database().ref("eventos/" + this.activeEvent + "/users/" + this.userEmail  );
+          var updates = {};
+          updates["/" + idCard + "/fechaSalida"] = fechaSalida;
+          var userData = {
+            name: this.userName,
+            picture: this.userPicture
+          };
+          updates["/profile"] = userData;
+          ref.update(updates);
+        },
+        grabarRetorno:function(e) {
+          var data = e.model['__data__'];
+          var idCard = data.card.id;
+          var fechaSalida = this.$$('#retorno_' + idCard).value;
+          var ref = firebase.database().ref("eventos/" + this.activeEvent + "/users/" + this.userEmail  );
+          var updates = {};
+          updates["/" + idCard + "/fechaRetorno"] = fechaSalida;
           var userData = {
             name: this.userName,
             picture: this.userPicture
