@@ -121,12 +121,15 @@
             ready:function() {
                 //this.eventName = 'Macrocomité 4T';
                 this.addEventListener('showChatbot', this.showChatbot);
-                firebase.initializeApp({
-                    apiKey: "AIzaSyBiBdm3MheV4sN7lfk0WLoVDtXXxHxbbvk",
-                    authDomain: "devnovators.firebaseapp.com",
-                    databaseURL: "https://devnovators.firebaseio.com",
-                    storageBucket: "devnovators.appspot.com",
-                });
+                var config = {
+                apiKey: "AIzaSyDCauBUnwjh-bBlSppl7v2rvalmfagNqCo",
+                authDomain: "fullviajes-8cff7.firebaseapp.com",
+                databaseURL: "https://fullviajes-8cff7.firebaseio.com",
+                projectId: "fullviajes-8cff7",
+                storageBucket: "fullviajes-8cff7.appspot.com",
+                messagingSenderId: "235797074906"
+  };
+  firebase.initializeApp(config);
                 var parent = this;
                 firebase.auth().onAuthStateChanged(function(account) {
                     if (account) {
